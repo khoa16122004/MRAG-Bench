@@ -14,14 +14,14 @@ if __name__ == "__main__":
    
     input_file = args.input_file
     print(input_file)
-    if input_file.split('.')[-1] == 'json':
-        with open(input_file, 'r') as f:
-            res = json.load(f)
-    else:
-        res = []
-        with open(input_file, 'r') as f:
-            for line in f.readlines():
-                res.append(json.loads(line))
+    # if input_file.split('.')[-1] == 'json':
+    with open(input_file, 'r') as f:
+        res = json.load(f)
+    # else:
+    #     res = []
+    #     with open(input_file, 'r') as f:
+    #         for line in f.readlines():
+    #             res.append(json.loads(line))
     
     outputpath = input_file.split('.')[0].split('/')[-1] + '_score.json'
     if not os.path.exists('results'):
