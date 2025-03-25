@@ -13,7 +13,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
    
     input_file = args.input_file
-
+    print(input_file)
     if input_file.split('.')[-1] == 'json':
         with open(input_file, 'r') as f:
             res = json.load(f)
