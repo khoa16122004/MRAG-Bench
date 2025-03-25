@@ -4,14 +4,16 @@ import time
 import argparse
 
 from tqdm import tqdm
-
+from dotenv import load_dotenv
 import sys
 
 # OpenAI
 import openai
 ## pip install openai==0.28.1 
+load_dotenv()
 
-openai.api_key = "please put your api key here. "
+openai.api_key =  os.getenv("open_ai_key")
+print(os.getenv("open_ai_key"))
 openai.organization = "please put your organization here."  
 
 

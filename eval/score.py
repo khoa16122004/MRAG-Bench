@@ -7,7 +7,7 @@ from utils.automatic_extract import parse_multi_choice_response
 from tqdm.auto import tqdm
 
 if __name__ == "__main__":
-
+    
     parser = argparse.ArgumentParser()
     parser.add_argument('--input_file', '-i', type=str, required=True, help='Path to the model results file')
     args = parser.parse_args()
