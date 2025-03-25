@@ -28,8 +28,9 @@ def eval_model(args):
     ans_file = open(f"ans_userag={args.use_rag}.json", "w")
     
     # Load model
-    pretrained = "lmms-lab/llava-onevision-qwen2-7b-ov"
-    model_name = "llava_qwen"
+    
+    pretrained = args.pretrained
+    model_name = pretrained.model_name
     device = "cuda"
     device_map = "auto"
     llava_model_args = {
@@ -109,7 +110,8 @@ if __name__ == "__main__":
     parser.add_argument("--answers-file", type=str, default="answer.jsonl")
     parser.add_argument("--use_rag", type=lambda x: x.lower() == 'true', default=False, help="Use RAG")
     parser.add_argument("--use_retrieved_examples", type=lambda x: x.lower() == 'true', default=False, help="Use retrieved examples")
-
+    parser.add_argument("--pretrained", type=str, default="lmms-lab/llava-onevision-qwen2-7b-ov")
+    parser.add_argument("--model_name", type=str, default="llava_qwen")
     args = parser.parse_args()
 
     eval_model(args)
