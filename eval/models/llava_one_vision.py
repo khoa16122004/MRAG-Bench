@@ -25,7 +25,7 @@ from utils.dataloader import bench_data_loader
 
 def eval_model(args):
 
-    ans_file = open(args.answers_file, "w")
+    ans_file = open(f"ans_userag={args.use_rag}.json", "w")
     
     # Load model
     pretrained = "lmms-lab/llava-onevision-qwen2-7b-ov"
@@ -108,7 +108,7 @@ if __name__ == "__main__":
     ############# added for mrag benchmark ####################
     parser.add_argument("--answers-file", type=str, default="answer.jsonl")
     parser.add_argument("--use_rag", type=lambda x: x.lower() == 'true', default=False, help="Use RAG")
-    parser.add_argument("--use_retrieved_examples", type=lambda x: x.lower() == 'true', default=False, help="Use retrieved examples")
+    parser.add_argument("--use_retrieved_examples", tyzpe=lambda x: x.lower() == 'true', default=False, help="Use retrieved examples")
 
     args = parser.parse_args()
 
