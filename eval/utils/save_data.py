@@ -8,9 +8,6 @@ def extract_data(output_dir):
     mrag_bench = load_dataset("uclanlp/MRAG-Bench", split="test")
     
     for item in tqdm(mrag_bench):
-        img_dir = os.path.join(output_dir, qs_id)
-        os.makedirs(img_dir, exist_ok=True)
-        
         
         qs_id = item['id'] 
         qs = item['question']
@@ -21,6 +18,9 @@ def extract_data(output_dir):
         choices_B = item['B']
         choices_C = item['C']
         choices_D = item['D']
+        
+        img_dir = os.path.join(output_dir, qs_id)
+        os.makedirs(img_dir, exist_ok=True)
         
         with open(os.path.join(img_dir, f"question.txt"), "w") as f:
             f.write(f"Question: {qs}\n\n")
