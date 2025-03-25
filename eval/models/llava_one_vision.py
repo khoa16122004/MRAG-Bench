@@ -118,3 +118,4 @@ if __name__ == "__main__":
 
     eval_model(args)
 
+    # python3 eval/models/llava_one_vision.py --answers-file "llava_one_vision_gt_rag_results.jsonl" --use_rag True --use_retrieved_examples False 
