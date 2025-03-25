@@ -32,9 +32,9 @@ def bench_data_loader(args, image_placeholder="<image>"):
         gt_images = item['gt_images']
         gt_images = [ib.convert("RGB") if isinstance(ib, Image.Image) else Image.open(io.BytesIO(ib['bytes'])).convert("RGB") for ib in gt_images]
         
-        image = item['image'].convert("RGB") 
+        image = item['image'].convert("RGB") # input image
 
-        if scenario == 'Incomplete':
+        if scenario == 'Incomplete': # incomplete is just using one gt image
             gt_images = [gt_images[0]]
         
         ### our evaluation instuction for all the models 

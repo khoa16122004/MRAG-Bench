@@ -45,6 +45,7 @@ def eval_model(args):
     for item in bench_data_loader(args, image_placeholder=DEFAULT_IMAGE_TOKEN):
         
         qs = item['question']
+        print("Question: ", qs)
         conv_template = "qwen_1_5"
         args.conv_mode = "qwen_1_5"
 
@@ -54,6 +55,8 @@ def eval_model(args):
         prompt_question = conv.get_prompt()
         
         input_ids = tokenizer_image_token(prompt_question, tokenizer, IMAGE_TOKEN_INDEX, return_tensors="pt").unsqueeze(0).to(device)
+        
+        print(item['image_files'])
         
         image_tensors = process_images(item['image_files'], image_processor, model.config)
         image_tensors = [_image.to(dtype=torch.float16, device=device) for _image in image_tensors]
@@ -72,7 +75,7 @@ def eval_model(args):
         text_outputs = tokenizer.batch_decode(cont, skip_special_tokens=True)
         outputs = text_outputs[0]
 
-        print(outputs)
+        print("Output: ", outputs)
         ans_id = shortuuid.uuid()
         ans_file.write(json.dumps({
                                    "qs_id": item['id'],
