@@ -108,7 +108,7 @@ if __name__ == "__main__":
     ############# added for mrag benchmark ####################
     parser.add_argument("--answers-file", type=str, default="answer.jsonl")
     parser.add_argument("--use_rag", type=lambda x: x.lower() == 'true', default=False, help="Use RAG")
-    parser.add_argument("--use_retrieved_examples", tyzpe=lambda x: x.lower() == 'true', default=False, help="Use retrieved examples")
+    parser.add_argument("--use_retrieved_examples", type=lambda x: x.lower() == 'true', default=False, help="Use retrieved examples")
 
     args = parser.parse_args()
 
