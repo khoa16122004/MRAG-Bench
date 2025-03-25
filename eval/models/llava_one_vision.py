@@ -63,9 +63,7 @@ def eval_model(args):
                 
         image_tensors = process_images(item['image_files'], image_processor, model.config)
         image_tensors = [_image.to(dtype=torch.float16, device=device) for _image in image_tensors]
-        print(image_tensors[0].shape)
-        print(len(image_tensors))
-        print("Max: ", image_tensors[0].min())
+
         image_sizes = [image.size for image in item['image_files']]
 
         with torch.inference_mode():
@@ -80,7 +78,6 @@ def eval_model(args):
         text_outputs = tokenizer.batch_decode(cont, skip_special_tokens=True)
         outputs = text_outputs[0]
 
-        print("Outputs: ", outputs)
         ans_id = shortuuid.uuid()
         ans_file.write(json.dumps({
                                    "qs_id": item['id'],
@@ -94,7 +91,6 @@ def eval_model(args):
                                    "aspect": item['aspect'],
                                    }) + "\n")
         ans_file.flush()
-        input()
     ans_file.close()
 
 if __name__ == "__main__":
