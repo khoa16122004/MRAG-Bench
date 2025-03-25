@@ -48,7 +48,7 @@ def eval_model(args):
         print("question: ", qs)
         conv_template = "qwen_1_5"
         args.conv_mode = "qwen_1_5"
-
+        print(item.keys())
         conv = copy.deepcopy(conv_templates[conv_template])
         conv.append_message(conv.roles[0], qs)
         conv.append_message(conv.roles[1], None)
