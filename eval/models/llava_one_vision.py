@@ -93,6 +93,7 @@ def eval_model(args):
                                    "aspect": item['aspect'],
                                    }) + "\n")
         ans_file.flush()
+        input()
     ans_file.close()
 
 if __name__ == "__main__":
