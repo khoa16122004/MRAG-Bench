@@ -8,7 +8,7 @@ def extract_data(output_dir):
     mrag_bench = load_dataset("uclanlp/MRAG-Bench", split="test")
     
     for item in tqdm(mrag_bench):
-        img_dir = os.path.join(output_dir, item)
+        img_dir = os.path.join(output_dir, qs_id)
         os.makedirs(img_dir, exist_ok=True)
         
         
