@@ -5,10 +5,10 @@ import json
 from tqdm import tqdm
 import shortuuid
 
-from LLaVA_NeXT.llava.model.builder import load_pretrained_model
-from LLaVA_NeXT.llava.mm_utils import get_model_name_from_path, process_images, tokenizer_image_token
-from LLaVA_NeXT.llava.constants import IMAGE_TOKEN_INDEX, DEFAULT_IMAGE_TOKEN, DEFAULT_IM_START_TOKEN, DEFAULT_IM_END_TOKEN, IGNORE_INDEX
-from LLaVA_NeXT.llava.conversation import conv_templates, SeparatorStyle
+from llava.model.builder import load_pretrained_model
+from llava.mm_utils import get_model_name_from_path, process_images, tokenizer_image_token
+from llava.constants import IMAGE_TOKEN_INDEX, DEFAULT_IMAGE_TOKEN, DEFAULT_IM_START_TOKEN, DEFAULT_IM_END_TOKEN, IGNORE_INDEX
+from llava.conversation import conv_templates, SeparatorStyle
 
 from PIL import Image
 import requests
@@ -45,7 +45,7 @@ def eval_model(args):
     for item in bench_data_loader(args, image_placeholder=DEFAULT_IMAGE_TOKEN):
         
         qs = item['question']
-        print("Question: ", qs)
+        print("question: ", qs)
         conv_template = "qwen_1_5"
         args.conv_mode = "qwen_1_5"
 
@@ -55,8 +55,6 @@ def eval_model(args):
         prompt_question = conv.get_prompt()
         
         input_ids = tokenizer_image_token(prompt_question, tokenizer, IMAGE_TOKEN_INDEX, return_tensors="pt").unsqueeze(0).to(device)
-        
-        print(item['image_files'])
         
         image_tensors = process_images(item['image_files'], image_processor, model.config)
         image_tensors = [_image.to(dtype=torch.float16, device=device) for _image in image_tensors]
@@ -75,7 +73,7 @@ def eval_model(args):
         text_outputs = tokenizer.batch_decode(cont, skip_special_tokens=True)
         outputs = text_outputs[0]
 
-        print("Output: ", outputs)
+        print(outputs)
         ans_id = shortuuid.uuid()
         ans_file.write(json.dumps({
                                    "qs_id": item['id'],
