@@ -60,12 +60,11 @@ def eval_model(args):
         prompt_question = conv.get_prompt()
         
         input_ids = tokenizer_image_token(prompt_question, tokenizer, IMAGE_TOKEN_INDEX, return_tensors="pt").unsqueeze(0).to(device)
-        
-        print("image_aspect_ratio ", model.image_aspect_ratio)
-        
+                
         image_tensors = process_images(item['image_files'], image_processor, model.config)
         image_tensors = [_image.to(dtype=torch.float16, device=device) for _image in image_tensors]
         print(image_tensors[0].shape)
+        print(len(image_tensors))
         image_sizes = [image.size for image in item['image_files']]
 
         with torch.inference_mode():
