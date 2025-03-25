@@ -17,7 +17,7 @@ if __name__ == "__main__":
     # if input_file.split('.')[-1] == 'json':
     with open(input_file, 'r') as f:
         for line in f:
-            res.append(json.load(f))
+            res.append(json.loads(line))
     # else:
     #     res = []
     #     with open(input_file, 'r') as f:
