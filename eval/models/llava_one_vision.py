@@ -39,7 +39,6 @@ def eval_model(args):
     overwrite_config["image_aspect_ratio"] = "pad"
     llava_model_args["overwrite_config"] = overwrite_config
     tokenizer, model, image_processor, max_length = load_pretrained_model(pretrained, None, model_name, device_map=device_map, **llava_model_args)
-    print("Image_proccesses: ", image_processor)
     model.eval()
 
     for item in bench_data_loader(args, image_placeholder=DEFAULT_IMAGE_TOKEN):
@@ -62,9 +61,11 @@ def eval_model(args):
         
         input_ids = tokenizer_image_token(prompt_question, tokenizer, IMAGE_TOKEN_INDEX, return_tensors="pt").unsqueeze(0).to(device)
         
+        print("image_aspect_ratio ", model.image_aspect_ratio)
+        
         image_tensors = process_images(item['image_files'], image_processor, model.config)
         image_tensors = [_image.to(dtype=torch.float16, device=device) for _image in image_tensors]
-
+        print(image_tensors[0].shape)
         image_sizes = [image.size for image in item['image_files']]
 
         with torch.inference_mode():
