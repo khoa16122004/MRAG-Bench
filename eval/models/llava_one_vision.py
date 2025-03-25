@@ -65,6 +65,7 @@ def eval_model(args):
         image_tensors = [_image.to(dtype=torch.float16, device=device) for _image in image_tensors]
         print(image_tensors[0].shape)
         print(len(image_tensors))
+        print("Max: ", image_tensors[0].max())
         image_sizes = [image.size for image in item['image_files']]
 
         with torch.inference_mode():
