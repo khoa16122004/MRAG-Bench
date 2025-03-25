@@ -29,7 +29,7 @@ def eval_model(args):
     
     # Load model
     
-    pretrained = f"args.lmms_lab/{args.pretrained}"
+    pretrained = f"lmms_lab/{args.pretrained}"
     model_name = args.model_name
     device = "cuda"
     device_map = "auto"
