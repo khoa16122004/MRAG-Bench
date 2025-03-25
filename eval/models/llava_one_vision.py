@@ -39,7 +39,7 @@ def eval_model(args):
     overwrite_config["image_aspect_ratio"] = "pad"
     llava_model_args["overwrite_config"] = overwrite_config
     tokenizer, model, image_processor, max_length = load_pretrained_model(pretrained, None, model_name, device_map=device_map, **llava_model_args)
-
+    print("Image_proccesses: ", image_processor)
     model.eval()
 
     for item in bench_data_loader(args, image_placeholder=DEFAULT_IMAGE_TOKEN):

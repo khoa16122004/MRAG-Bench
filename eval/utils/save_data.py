@@ -36,7 +36,7 @@ def extract_data(output_dir):
         
         image = item['image'].convert('RGB') # input-question image, 
         image.save(os.path.join(img_dir, "question_img.png"))
-        break
+        # break
     
 
 extract_data("Extract_image")
