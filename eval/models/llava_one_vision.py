@@ -107,7 +107,7 @@ if __name__ == "__main__":
     parser.add_argument("--num_beams", type=int, default=1)
     parser.add_argument("--test_size", type=int, default=10000000)
     ############# added for mrag benchmark ####################
-    parser.add_argument("--answers-file", type=str, default="answer.jsonl")
+    # parser.add_argument("--answers-file", type=str, default="answer.jsonl")
     parser.add_argument("--use_rag", type=lambda x: x.lower() == 'true', default=False, help="Use RAG")
     parser.add_argument("--use_retrieved_examples", type=lambda x: x.lower() == 'true', default=False, help="Use retrieved examples")
     parser.add_argument("--pretrained", type=str, default="llava-onevision-qwen2-7b-ov")
