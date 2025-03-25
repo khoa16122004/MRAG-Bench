@@ -25,11 +25,11 @@ from utils.dataloader import bench_data_loader
 
 def eval_model(args):
 
-    ans_file = open(f"ans_userag={args.use_rag}.json", "w")
+    ans_file = open(f"ans_userag={args.use_rag}_modelname={args.model_name}_pretrained={args.pretrained}.json", "w")
     
     # Load model
     
-    pretrained = args.pretrained
+    pretrained = f"args.lmms_lab/{args.pretrained}"
     model_name = pretrained.model_name
     device = "cuda"
     device_map = "auto"
@@ -110,7 +110,7 @@ if __name__ == "__main__":
     parser.add_argument("--answers-file", type=str, default="answer.jsonl")
     parser.add_argument("--use_rag", type=lambda x: x.lower() == 'true', default=False, help="Use RAG")
     parser.add_argument("--use_retrieved_examples", type=lambda x: x.lower() == 'true', default=False, help="Use retrieved examples")
-    parser.add_argument("--pretrained", type=str, default="lmms-lab/llava-onevision-qwen2-7b-ov")
+    parser.add_argument("--pretrained", type=str, default="llava-onevision-qwen2-7b-ov")
     parser.add_argument("--model_name", type=str, default="llava_qwen")
     args = parser.parse_args()
 
