@@ -34,7 +34,7 @@ class OpenFlamingo:
             num_beams=3,
         )
         output = self.tokenizer.decode(generated_text[0])
-        return generated_text[0]
+        return output
 
         
         
