@@ -60,7 +60,7 @@ def bench_data_loader(args, image_placeholder="<image>", special_token=None):
         prompt_question_part = qs
         prompt_instruction_part = prompt
         if special_token:
-            qs = prompt + {special_token} + qs
+            qs = prompt + special_token + qs
         else:
             qs = prompt + qs
             
