@@ -8,7 +8,6 @@ import torch
 class LLava:
     def __init__(self, pretrained, model_name):
         self.pretrained = f"lmms-lab/{pretrained}"
-        print(self.pretrained)
         self.model_name = model_name
         self.device = "cuda"
         self.device_map = "auto"
@@ -18,7 +17,7 @@ class LLava:
         overwrite_config = {}
         overwrite_config["image_aspect_ratio"] = "pad"
         self.llava_model_args["overwrite_config"] = overwrite_config
-        self.tokenizer, self.model, self.image_processor, _ = load_pretrained_model(pretrained, None, model_name, device_map=self.device_map, **self.llava_model_args)
+        self.tokenizer, self.model, self.image_processor, _ = load_pretrained_model(self.pretrained, None, model_name, device_map=self.device_map, **self.llava_model_args)
         self.model.eval()
     
     def inferece(self, qs, img_files):
