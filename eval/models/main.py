@@ -15,7 +15,7 @@ import sys
 import warnings
 from PIL import Image
 import math
-from llava import LLava
+from eval.models.llava_ import LLava
 
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from utils.dataloader import bench_data_loader 
