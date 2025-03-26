@@ -30,7 +30,7 @@ class OpenFlamingo:
             vision_x=vision_x,
             lang_x=lang_x["input_ids"].cuda(),
             attention_mask=lang_x["attention_mask"].cuda(),
-            max_new_tokens=20,
+            max_new_tokens=4096,
             pad_token_id=self.tokenizer.pad_token_id,
             num_beams=3,
         )
