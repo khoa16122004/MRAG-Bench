@@ -21,6 +21,7 @@ class LLava:
         self.model.eval()
     
     def inference(self, qs, img_files):
+        print("question: ", qs)
         conv = copy.deepcopy(conv_templates["qwen_1_5"])
         conv.append_message(conv.roles[0], qs)
         conv.append_message(conv.roles[1], None)
