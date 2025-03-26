@@ -7,6 +7,9 @@ import torch
 
 class LLava:
     def __init__(self, pretrained, model_name):
+        
+        # llava-next-interleave-7b
+        # llava-onevision-qwen2-7b-ov
         self.pretrained = f"lmms-lab/{pretrained}"
         self.model_name = model_name
         self.device = "cuda"
@@ -23,7 +26,7 @@ class LLava:
     
     
     def inference(self, qs, img_files):
-        print("question: ", qs)
+        
         conv = copy.deepcopy(conv_templates["qwen_1_5"])
         conv.append_message(conv.roles[0], qs)
         conv.append_message(conv.roles[1], None)

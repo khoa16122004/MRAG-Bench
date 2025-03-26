@@ -13,8 +13,8 @@ class OpenFlamingo:
         )
         self.tokenizer.padding_side = "left"
 
-        
-        checkpoint_path = hf_hub_download(pretrained, "checkpoint.pt")
+        # OpenFlamingo-9B-vitl-mpt7b
+        checkpoint_path = hf_hub_download(f"openflamingo/{pretrained}", "checkpoint.pt")
         model.load_state_dict(torch.load(checkpoint_path), strict=False)
 
         self.model = model
