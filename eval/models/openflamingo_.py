@@ -33,7 +33,7 @@ class OpenFlamingo:
             max_new_tokens=20,
             num_beams=3,
         )
-        output = self.tokenizer.decode(generated_text[0])
+        output = self.tokenizer.decode(generated_text[0], skip_special_tokens=True).strip()
         return output
 
         
