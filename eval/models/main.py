@@ -24,12 +24,13 @@ def main(args):
     if "llava" in args.model_name:
         from llava_ import LLava
         image_token = "<image>"
-        special_token = "<|endofchunk|>"
         model = LLava(args.pretrained, args.model_name)
 
     elif "openflamingo" in args.model_name:
         from openflamingo_ import OpenFlamingo
         image_token = "<image>"
+        special_token = "<|endofchunk|>"
+
         model = OpenFlamingo(args.pretrained)
     
     for item in bench_data_loader(args, image_placeholder=image_token, special_token=special_token):
