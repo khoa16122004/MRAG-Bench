@@ -11,7 +11,7 @@ class OpenFlamingo:
             tokenizer_path="anas-awadalla/mpt-7b",
             cross_attn_every_n_layers=4
         )
-        self.tokenizer.padding_side = "left"
+        tokenizer.padding_side = "left"
 
         # OpenFlamingo-9B-vitl-mpt7b
         checkpoint_path = hf_hub_download(f"openflamingo/{pretrained}", "checkpoint.pt")
