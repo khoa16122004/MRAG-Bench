@@ -20,10 +20,11 @@ sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from utils.dataloader import bench_data_loader 
 
 def main(args):
-    
+    special_token = None
     if "llava" in args.model_name:
         from llava_ import LLava
         image_token = "<image>"
+        special_token = "<|endofchunk|>"
         model = LLava(args.pretrained, args.model_name)
 
     elif "openflamingo" in args.model_name:
@@ -31,7 +32,7 @@ def main(args):
         image_token = "<image>"
         model = OpenFlamingo(args.pretrained)
     
-    for item in bench_data_loader(args, image_placeholder=image_token):
+    for item in bench_data_loader(args, image_placeholder=image_token, special_token=special_token):
         
         qs = item['question']
         img_files = item['image_files']
