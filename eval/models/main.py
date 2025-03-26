@@ -31,7 +31,8 @@ def main(args):
         qs = item['question']
         img_files = item['image_files']
         
-        output = model.inference(qs, img_files)
+        output = model.inference(qs, img_files)[0]
+        print("Question: ", qs)
         print("Output: ", output)
         
 
