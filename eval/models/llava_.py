@@ -25,7 +25,7 @@ class LLava:
         conv.append_message(conv.roles[0], qs)
         conv.append_message(conv.roles[1], None)
         prompt_question = conv.get_prompt()
-        input_ids = tokenizer_image_token(prompt_question, self.tokenizer, IMAGE_TOKEN_INDEX, return_tensors="pt").unsqueeze(0).to(device)
+        input_ids = tokenizer_image_token(prompt_question, self.tokenizer, IMAGE_TOKEN_INDEX, return_tensors="pt").unsqueeze(0).to(self.device)
         image_tensors = process_images(img_files, self.image_processor, self.model.config)
         image_sizes = [image.size for image in img_files]
                     
