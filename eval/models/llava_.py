@@ -8,6 +8,7 @@ import torch
 class LLava:
     def __init__(self, pretrained, model_name):
         self.pretrained = f"lmms-lab/{pretrained}"
+        print(self.pretrained)
         self.model_name = model_name
         self.device = "cuda"
         self.device_map = "auto"
