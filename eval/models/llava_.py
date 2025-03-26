@@ -20,7 +20,7 @@ class LLava:
         self.tokenizer, self.model, self.image_processor, _ = load_pretrained_model(self.pretrained, None, model_name, device_map=self.device_map, **self.llava_model_args)
         self.model.eval()
     
-    def inferece(self, qs, img_files):
+    def inference(self, qs, img_files):
         conv = copy.deepcopy(conv_templates["qwen_1_5"])
         conv.append_message(conv.roles[0], qs)
         conv.append_message(conv.roles[1], None)
