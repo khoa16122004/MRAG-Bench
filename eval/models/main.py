@@ -15,7 +15,8 @@ import sys
 import warnings
 from PIL import Image
 import math
-from llava_ import LLava, OpenFlamingo
+from llava_ import LLava
+from openflamingo_ import OpenFlamingo
 
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from utils.dataloader import bench_data_loader 
