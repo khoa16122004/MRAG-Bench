@@ -25,11 +25,11 @@ class OpenFlamingo:
         vision_x = [self.image_processor(image).unsqueeze(0) for image in img_files]
         vision_x = torch.cat(vision_x, dim=0)
         vision_x = vision_x.unsqueeze(1).unsqueeze(0).cuda()
-        lang_x = self.tokenizer(qs, return_tensors="pt").cuda()
+        lang_x = self.tokenizer(qs, return_tensors="pt")
         generated_text = self.model.generate(
             vision_x=vision_x,
-            lang_x=lang_x["input_ids"],
-            attention_mask=lang_x["attention_mask"],
+            lang_x=lang_x["input_ids"].cuda(),
+            attention_mask=lang_x["attention_mask"].cuda(),
             max_new_tokens=20,
             num_beams=3,
         )
