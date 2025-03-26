@@ -31,9 +31,8 @@ def main(args):
         
         qs = item['question']
         img_files = item['image_files'] # list of pil_image
-        image_tensors = torch.stack([toTensor(image) for image in img_files])
-        print(image_tensors.shape)     
-        img_files = toPilImage(image_tensors)
+        image_tensors = [toTensor(image) for image in img_files]
+        img_files = [toPilImage(image_tensor) for image_tensor in image_tensors]
         output = model.inference(qs, img_files)
         print("Output: ", output)
         
