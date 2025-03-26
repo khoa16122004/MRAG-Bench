@@ -53,8 +53,9 @@ def bench_data_loader(args, image_placeholder="<image>"):
         # qs += f"\n Choices:\nA: {choices_A}\nB: {choices_B}\nC: {choices_C}\nD: {choices_D}"
         prompt_question_part = qs
         prompt_instruction_part = prompt
-        qs = prompt + qs
-        
+        # qs = prompt + qs
+        qs = f"{qs}. Explain why your answer. {image_placeholder}{image_placeholder}{image_placeholder}{image_placeholder}{image_placeholder}{image_placeholder}"
+                
         if args.use_rag: 
             if args.use_retrieved_examples:
                 retrieved_images = item['retrieved_images']
