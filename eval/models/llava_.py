@@ -20,7 +20,6 @@ class LLava:
         self.tokenizer, self.model, self.image_processor, _ = load_pretrained_model(self.pretrained, None, model_name, device_map=self.device_map, **self.llava_model_args)
         self.model.eval()
         
-        return self.image_processor
     
     
     def inference(self, qs, img_files):
