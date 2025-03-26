@@ -30,7 +30,7 @@ class OpenFlamingo:
         generated_text = self.model.generate(
             vision_x=vision_x,
             lang_x=lang_x["input_ids"],
-            attention_mask=lang_x["attention_mask"].cuda(),
+            attention_mask=lang_x["attention_mask"],
             max_new_tokens=20,
             num_beams=3,
         )
