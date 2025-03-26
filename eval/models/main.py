@@ -15,17 +15,21 @@ import sys
 import warnings
 from PIL import Image
 import math
-from llava_ import LLava
+from llava_ import LLava, OpenFlamingo
 
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from utils.dataloader import bench_data_loader 
 
 def main(args):
     
-    if "llava" in args.pretrained:
+    if "llava" in args.model_name:
         image_token = "<image>"
         model = LLava(args.pretrained, args.model_name)
 
+    elif "openflamingo" in args.model_name:
+        image_token = "<image>"
+        model = OpenFlamingo(args.pretrained)
+    
     for item in bench_data_loader(args, image_placeholder=image_token):
         
         qs = item['question']

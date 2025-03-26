@@ -39,23 +39,22 @@ def bench_data_loader(args, image_placeholder="<image>"):
         
         ### our evaluation instuction for all the models 
         if not args.use_rag: 
-            # prompt = f"Answer with the option's letter from the given choices directly. {image_placeholder}\n"
-            prompt = f"First, answer with the question and explain your reasoning.{image_placeholder}\n"
+            prompt = f"Answer with the option's letter from the given choices directly. {image_placeholder}\n"
+            # prompt = f"First, answer with the option's letter from the given choices. Then, explain your reasoning.{image_placeholder}\n"
             image_files = [image]
         else: 
             image_files = [image] + gt_images
-            # prompt = f"You will be given one question concerning several images. The first image is the input image, others are retrieved examples to help you. Answer with the option's letter from the given choices directly. {image_placeholder}{image_placeholder}{image_placeholder}{image_placeholder}{image_placeholder}{image_placeholder}\n"
-            prompt = f"You will be given one question concerning several images. The first image is the input image, others are retrieved examples to help you. First, answer the question and explain your reasoning why you choice it. {image_placeholder}{image_placeholder}{image_placeholder}{image_placeholder}{image_placeholder}{image_placeholder}\n"
+            prompt = f"You will be given one question concerning several images. The first image is the input image, others are retrieved examples to help you. Answer with the option's letter from the given choices directly. {image_placeholder}{image_placeholder}{image_placeholder}{image_placeholder}{image_placeholder}{image_placeholder}\n"
+            # prompt = f"You will be given one question concerning several images. The first image is the input image, others are retrieved examples to help you. First, answer with the option's letter from the given choices and explain your reasoning. {image_placeholder}{image_placeholder}{image_placeholder}{image_placeholder}{image_placeholder}{image_placeholder}\n"
             if scenario == 'Incomplete':
-                # prompt = f"You will be given one question concerning several images. The first image is the input image, others are retrieved examples to help you. Answer with the option's letter from the given choices directly. {image_placeholder}{image_placeholder}\n"
-                prompt = f"You will be given one question concerning several images. The first image is the input image, others are retrieved examples to help you. First, answer with the option's letter from the given choices. Then, explain your reasoning.. {image_placeholder}{image_placeholder}\n"
+                prompt = f"You will be given one question concerning several images. The first image is the input image, others are retrieved examples to help you. Answer with the option's letter from the given choices directly. {image_placeholder}{image_placeholder}\n"
+                # prompt = f"You will be given one question concerning several images. The first image is the input image, others are retrieved examples to help you. First, answer with the option's letter from the given choices. Then, explain your reasoning.. {image_placeholder}{image_placeholder}\n"
 
-        # qs += f"\n Choices:\nA: {choices_A}\nB: {choices_B}\nC: {choices_C}\nD: {choices_D}"
+        qs += f"\n Choices:\nA: {choices_A}\nB: {choices_B}\nC: {choices_C}\nD: {choices_D}"
         prompt_question_part = qs
         prompt_instruction_part = prompt
-        # qs = prompt + qs
-        qs = f"{qs}. Explain why your answer. {image_placeholder}{image_placeholder}{image_placeholder}{image_placeholder}{image_placeholder}{image_placeholder}"
-                
+        qs = prompt + qs
+        
         if args.use_rag: 
             if args.use_retrieved_examples:
                 retrieved_images = item['retrieved_images']
