@@ -25,7 +25,7 @@ class OpenFlamingo:
         vision_x = [self.image_processor(image).unsqueeze(0) for image in img_files]
         vision_x = torch.cat(vision_x, dim=0)
         vision_x = vision_x.unsqueeze(1).unsqueeze(0).cuda()
-        
+        print(vision_x.shape)
         lang_x = self.tokenizer(qs)
         generated_text = self.model.generate(
             vision_x=vision_x,
