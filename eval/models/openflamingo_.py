@@ -31,10 +31,11 @@ class OpenFlamingo:
             lang_x=lang_x["input_ids"].cuda(),
             attention_mask=lang_x["attention_mask"].cuda(),
             max_new_tokens=20,
+            pad_token_id=self.tokenizer.pad_token_id,
             num_beams=3,
         )
         output = self.tokenizer.decode(generated_text[0], skip_special_tokens=True).strip()
-        return output
+        return outputx
 
         
         
