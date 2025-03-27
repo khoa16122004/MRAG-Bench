@@ -22,12 +22,10 @@ class OpenFlamingo:
         self.tokenizer.pad_token = tokenizer.eos_token
         self.tokenizer.pad_token_id = 50277
         self.tokenizer.padding_side = "left"
-        print(self.model)
     def inference(self, qs, img_files):
         vision_x = [self.image_processor(image).unsqueeze(0) for image in img_files]
         vision_x = torch.cat(vision_x, dim=0)
         vision_x = vision_x.unsqueeze(1).unsqueeze(0).cuda()
-        print(f"PAD TOKEN: {self.tokenizer.pad_token}, PAD TOKEN ID: {self.tokenizer.pad_token_id}")
         lang_x = self.tokenizer([qs], return_tensors="pt")
         
         generated_text = self.model.generate(
