@@ -22,8 +22,6 @@ class OpenFlamingo:
         self.tokenizer.pad_token = tokenizer.eos_token
         self.tokenizer.pad_token_id = 50277
         self.tokenizer.padding_side = "left"
-        num_new_tokens = len(self.tokenizer)
-        self.model.resize_token_embeddings(num_new_tokens, pad_to_multiple_of=8)
         print(self.model)
     def inference(self, qs, img_files):
         vision_x = [self.image_processor(image).unsqueeze(0) for image in img_files]
