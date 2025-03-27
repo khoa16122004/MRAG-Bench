@@ -53,7 +53,7 @@ class LLava:
     def inference(self, qs, img_files): 
         
         input_ids = self.encode_text_batch(qs)
-        print("input ids: ", input_ids.shape)
+        # print("input ids: ", input_ids.shape)
         image_tensors, image_sizes = self.encode_image_batch(img_files)
         print("image tensor: ", image_tensors.shape)
                     
