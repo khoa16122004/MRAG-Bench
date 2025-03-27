@@ -26,6 +26,7 @@ class DeepSeek:
                 "content": ""
             }
         ]
+        print(conversation)
         prepare_inputs = self.vl_chat_processor(
             conversation=conversation,
             images=img_files,
