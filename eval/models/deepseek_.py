@@ -26,9 +26,8 @@ class DeepSeek:
                 "content": ""
             }
         ]
-        print(conversation)
         prepare_inputs = self.vl_chat_processor(
-            conversation=conversation,
+            conversations=conversation,
             images=img_files,
             force_batchify=True
         ).to(self.vl_gpt.device)
