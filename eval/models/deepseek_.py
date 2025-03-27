@@ -10,8 +10,8 @@ class DeepSeek:
         self.vl_chat_processor: VLChatProcessor = VLChatProcessor.from_pretrained(f"deepseek-ai/{pretrained}")
         self.tokenizer = self.vl_chat_processor.tokenizer
         
-        vl_gpt: MultiModalityCausalLM = AutoModelForCausalLM.from_pretrained(f"deepseek-ai/{pretrained}", trust_remote_code=True)
-        self.vl_gpt = vl_gpt.to(torch.bfloat16).cuda().eval()
+        self.vl_gpt: MultiModalityCausalLM = AutoModelForCausalLM.from_pretrained(f"deepseek-ai/{pretrained}", trust_remote_code=True)
+        self.vl_gpt.to(torch.bfloat16).cuda().eval()
         
         
     def inference(self, qs, img_files):
