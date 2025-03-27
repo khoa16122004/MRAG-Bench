@@ -6,14 +6,13 @@ processor = MLlavaProcessor.from_pretrained("TIGER-Lab/Mantis-8B-clip-llama3")
 from huggingface_hub import hf_hub_download
 import torch
 
-class Matis:
+class Mantis:
     def __init__(self, pretrained):
         # Mantis-8B-clip-llama3
         self.processor = MLlavaProcessor.from_pretrained(f"TIGER-Lab/{pretrained}")
-        self.model = LlavaForConditionalGeneration.from_pretrained(f"TIGER-Lab/{pretrained}", device_map="cuda", torch_dtype=torch.bfloat16, attn_implementation="flash_attention_2")
+        self.model = LlavaForConditionalGeneration.from_pretrained(f"TIGER-Lab/{pretrained}", device_map=f"cuda:{torch.cuda.current_device()}", torch_dtype=torch.bfloat16, attn_implementation="flash_attention_2")
 
-        self.generation_kwargs = {"max_new_tokens": 1024, "num_beams": 1, "do_sample": False
-                             }
+        self.generation_kwargs = {"max_new_tokens": 1024, "num_beams": 1, "do_sample": False}
     def inference(self, qs, img_files):
         response, history = chat_mllava(qs, img_files, self.model, self.processor, **self.generation_kwargs)
         
