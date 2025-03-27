@@ -13,6 +13,7 @@ class OpenFlamingo:
         )
         tokenizer.padding_side = "left"
         tokenizer.pad_token = tokenizer.eos_token
+        
         # OpenFlamingo-9B-vitl-mpt7b
         checkpoint_path = hf_hub_download(f"openflamingo/{pretrained}", "checkpoint.pt")
         model.load_state_dict(torch.load(checkpoint_path, map_location="cuda"), strict=False)
@@ -25,7 +26,7 @@ class OpenFlamingo:
         vision_x = [self.image_processor(image).unsqueeze(0) for image in img_files]
         vision_x = torch.cat(vision_x, dim=0)
         vision_x = vision_x.unsqueeze(1).unsqueeze(0).cuda()
-        print(vision_x.shape)
+        print(f"PAD TOKEN: {self.tokenizer.pad_token}, PAD TOKEN ID: {self.tokenizer.pad_token_id}")
         lang_x = self.tokenizer([qs], return_tensors="pt")
         generated_text = self.model.generate(
             vision_x=vision_x,
