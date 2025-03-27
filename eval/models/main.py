@@ -36,7 +36,7 @@ def main(args):
     elif "mantis" in args.model_name:
         from mantis_ import Mantis
         image_token = "<image>"
-        model = Matis(args.pretrained)
+        model = Mantis(args.pretrained)
     
     for item in bench_data_loader(args, image_placeholder=image_token, special_token=special_token):
         
