@@ -61,7 +61,7 @@ def main(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--num_retrieval", default=1)
+    parser.add_argument("--num_retrieval", type=int, default=1)
     parser.add_argument("--pretrained", type=str, default="llava-onevision-qwen2-7b-ov")
     parser.add_argument("--model_name", type=str, default="llava_qwen")
     args = parser.parse_args()
