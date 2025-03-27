@@ -41,6 +41,11 @@ def main(args):
         from mantis_ import Mantis
         image_token = "<image>"
         model = Mantis(args.pretrained)
+        
+    elif "deepseek" in args.model_name:
+        from deepseek_ import DeepSeek
+        image_token = "<image_placeholder>"
+        model = DeepSeek(args.pretrained)
     
     for item in bench_data_loader(args, image_placeholder=image_token, special_token=special_token):
         

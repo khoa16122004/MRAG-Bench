@@ -9,6 +9,7 @@ import torch
 class Mantis:
     def __init__(self, pretrained):
         # Mantis-8B-clip-llama3
+        # Mantis-8B-siglip-llama3
         self.processor = MLlavaProcessor.from_pretrained(f"TIGER-Lab/{pretrained}")
         self.model = LlavaForConditionalGeneration.from_pretrained(f"TIGER-Lab/{pretrained}", device_map=f"cuda:{torch.cuda.current_device()}", torch_dtype=torch.bfloat16, attn_implementation="flash_attention_2")
 
