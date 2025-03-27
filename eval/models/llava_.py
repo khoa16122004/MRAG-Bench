@@ -33,7 +33,7 @@ class LLava:
             input_id = tokenizer_image_token(prompt_question, self.tokenizer, IMAGE_TOKEN_INDEX, return_tensors="pt").to(self.device)
             inputs_ids.append(input_id)
         
-        return inputs_ids  
+        return torch.stack(inputs_ids)  
     
     def encode_image_batch(self, img_files):
         image_tensors = []
