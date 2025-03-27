@@ -13,6 +13,7 @@ class OpenFlamingo:
         )
         tokenizer.padding_side = "left"
         tokenizer.pad_token = tokenizer.eos_token
+        tokenizer.pad_token_id = 50277
         
         # OpenFlamingo-9B-vitl-mpt7b
         checkpoint_path = hf_hub_download(f"openflamingo/{pretrained}", "checkpoint.pt")
