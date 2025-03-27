@@ -20,9 +20,10 @@ class OpenFlamingo:
         self.model = model.cuda()
         self.image_processor = image_processor
         self.tokenizer = tokenizer
-        self.tokenizer.padding_side = "left"
         self.tokenizer.pad_token = tokenizer.eos_token
         self.tokenizer.pad_token_id = 50277
+        self.tokenizer.padding_side = "left"
+
     def inference(self, qs, img_files):
         vision_x = [self.image_processor(image).unsqueeze(0) for image in img_files]
         vision_x = torch.cat(vision_x, dim=0)
