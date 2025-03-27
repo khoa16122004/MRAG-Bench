@@ -60,8 +60,8 @@ def bench_data_loader(args, image_placeholder="<image>", special_token=None):
         # prompt_question_part = qs
         # prompt_instruction_part = prompt
         # qs = prompt + qs
-        prompt = "A dog"
-        qs = f"{prompt}{special_token}{image_placeholder}{image_placeholder}{image_placeholder}{image_placeholder}{image_placeholder}{image_placeholder}"
+        prompt = "You will be given one question concerning several images. The first image is the input image, others are retrieved examples to help you. Answer with the option's letter from the given choices directly."
+        qs = f"{prompt}{qs}{special_token}{image_placeholder}{image_placeholder}{image_placeholder}{image_placeholder}{image_placeholder}{image_placeholder}"
         # if special_token:
         #     qs += special_token
         
@@ -83,7 +83,7 @@ def bench_data_loader(args, image_placeholder="<image>", special_token=None):
             "answer": ans,
             "gt_choice": gt_choice,
             "scenario": scenario,
-            # "prompt_question_part": prompt_question_part,
-            # "prompt_instruction_part": prompt_instruction_part,
+            "prompt_question_part": prompt_question_part,
+            "prompt_instruction_part": prompt_instruction_part,
             "aspect": item['aspect']
         }
