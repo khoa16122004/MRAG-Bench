@@ -45,7 +45,9 @@ def init_model(args):
     
     return model, image_token
 
-def main(args, model, image_token):
+def main(args):
+    model, image_token = init_model(args)
+    
     for item in bench_data_loader(args, image_placeholder=image_token, special_token=special_token):
         qs = item['question']
         img_files = item['image_files']
