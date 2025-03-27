@@ -26,7 +26,7 @@ class OpenFlamingo:
         vision_x = torch.cat(vision_x, dim=0)
         vision_x = vision_x.unsqueeze(1).unsqueeze(0).cuda()
         print(vision_x.shape)
-        lang_x = self.tokenizer(qs, return_tensors="pt")
+        lang_x = self.tokenizer([qs], return_tensors="pt")
         generated_text = self.model.generate(
             vision_x=vision_x,
             lang_x=lang_x["input_ids"].cuda(),
