@@ -32,7 +32,7 @@ class DeepSeek:
             force_batchify=True
         ).to(self.vl_gpt.device)
         
-        inputs_embeds = self.vl_gpt.prepare_inputs(**prepare_inputs)
+        inputs_embeds = self.vl_gpt.prepare_inputs_embeds(**prepare_inputs)
         outputs = self.vl_gpt.language_model.generate(
             inputs_embeds=inputs_embeds,
             attention_mask=prepare_inputs.attention_mask,
