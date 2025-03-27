@@ -40,7 +40,7 @@ class LLava:
         image_sizes = []
         for batch_img in img_files:
             batch_img_tensor = process_images(batch_img, self.image_processor, self.model.config)
-            batch_img_tensor = [_image.to(dtype=torch.float16, device=self.device) for _image in batch_img_tensor]
+            batch_img_tensor = torch.stack([_image.to(dtype=torch.float16, device=self.device) for _image in batch_img_tensor])
 
             batch_img_sizes = [image.size for image in batch_img]
             
@@ -48,7 +48,7 @@ class LLava:
             image_sizes.append(batch_img_sizes)
 
 
-        return image_tensors, image_sizes
+        return torch.stack(image_tensors), image_sizes
         
     def inference(self, qs, img_files): 
         
