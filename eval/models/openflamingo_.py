@@ -34,7 +34,7 @@ class OpenFlamingo:
             pad_token_id=self.tokenizer.pad_token_id,
             num_beams=1,
         )
-        output = self.tokenizer.decode(generated_text[0], skip_special_tokens=True).strip()
+        output = self.tokenizer.decode(generated_text[0]).strip()
         return output
 
         
