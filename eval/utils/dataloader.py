@@ -34,22 +34,28 @@ def bench_data_loader(args, image_placeholder="<image>", special_token=None):
         gt_images = [ib.convert("RGB") if isinstance(ib, Image.Image) else Image.open(io.BytesIO(ib['bytes'])).convert("RGB") for ib in gt_images]
         
         image = item['image'].convert("RGB") # input image
-        number_images = len(gt_images) + 1
-
+        number_images = args.number_images + 1
         
-        ### our evaluation instuction for all the models 
-        if args.use_rag:
-            image_files = [image] + gt_images
-            prompt = f"You will be given one question concerning several images. The first image is the input image, others are retrieved examples to help you. Answer with the option's letter from the given choices directly."
-            for _ in range(number_images):
-                prompt += f"{image_placeholder}"
-            prompt += "\n"
-        else:
-            image_files = [image]
-            prompt = f"You will be given one question concerning several images. The first image is the input image, others are retrieved examples to help you. Answer with the option's letter from the given choices directly. {image_placeholder}\n"
+        prompt = f"You will be given one question concerning several images. The first image is the input image, others are retrieved examples to help you. Answer with the option's letter from the given choices directly. {image_placeholder}"
+        image_files = [image]
+        for i in range(number_images):
+            image_files.append(gt_images[i])
+            prompt += image_placeholder
+
+
+        # ### our evaluation instuction for all the models 
+        # if args.use_rag:
+        #     image_files = [image] + gt_images
+        #     prompt = f"You will be given one question concerning several images. The first image is the input image, others are retrieved examples to help you. Answer with the option's letter from the given choices directly."
+        #     for _ in range(number_images):
+        #         prompt += f"{image_placeholder}"
+        #     prompt += "\n"
+        # else:
+        #     image_files = [image]
+        #     prompt = f"You will be given one question concerning several images. The first image is the input image, others are retrieved examples to help you. Answer with the option's letter from the given choices directly. {image_placeholder}\n"
             
-        qs += f"\n Choices:\nA: {choices_A}\nB: {choices_B}\nC: {choices_C}\nD: {choices_D}"
-        final_qs = prompt + qs
+        qs += f"\n Choices:\nA: {choices_A}\nB: {choices_B}\nC: {choices_C}\nD: {choices_D}\n"
+        final_qs = prompt + "\n" + qs
         
         yield {
             "id": qs_id, 
