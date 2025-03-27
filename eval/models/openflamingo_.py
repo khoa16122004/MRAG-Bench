@@ -16,20 +16,23 @@ class OpenFlamingo:
         # OpenFlamingo-9B-vitl-mpt7b
         checkpoint_path = hf_hub_download(f"openflamingo/{pretrained}", "checkpoint.pt")
         model.load_state_dict(torch.load(checkpoint_path, map_location="cuda"), strict=False)
-
+       
         self.model = model.cuda()
         self.image_processor = image_processor
         self.tokenizer = tokenizer
         self.tokenizer.pad_token = tokenizer.eos_token
         self.tokenizer.pad_token_id = 50277
         self.tokenizer.padding_side = "left"
-
+        num_new_tokens = len(self.tokenizer)
+        self.model.resize_token_embeddings(num_new_tokens, pad_to_multiple_of=8)
+        
     def inference(self, qs, img_files):
         vision_x = [self.image_processor(image).unsqueeze(0) for image in img_files]
         vision_x = torch.cat(vision_x, dim=0)
         vision_x = vision_x.unsqueeze(1).unsqueeze(0).cuda()
         print(f"PAD TOKEN: {self.tokenizer.pad_token}, PAD TOKEN ID: {self.tokenizer.pad_token_id}")
         lang_x = self.tokenizer([qs], return_tensors="pt")
+        
         generated_text = self.model.generate(
             vision_x=vision_x,
             lang_x=lang_x["input_ids"].cuda(),
