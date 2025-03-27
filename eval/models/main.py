@@ -20,6 +20,10 @@ sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from utils.dataloader import bench_data_loader 
 
 def main(args):
+    
+    ans_file = open(f"ans_userag={args.use_rag}_modelname={args.model_name}_pretrained={args.pretrained}.json", "w")
+
+    
     special_token = None
     if "llava" in args.model_name:
         from llava_ import LLava
@@ -49,6 +53,20 @@ def main(args):
         print("Output: ", output)
         print("GT answer: ", gt_ans)
         
+        ans_id = shortuuid.uuid()
+        ans_file.write(json.dumps({
+                                   "qs_id": item['id'],
+                                   "prompt": item['prompt'],
+                                   "output": output,
+                                   "gt_answer": item['answer'],
+                                   "shortuuid": ans_id,
+                                   "model_id": args.pretrained,
+                                   "gt_choice": item['gt_choice'],
+                                   "scenario": item['scenario'],
+                                   "aspect": item['aspect'],
+                                   }) + "\n")
+        ans_file.flush()
+    ans_file.close()
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
