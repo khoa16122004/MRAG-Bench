@@ -25,12 +25,13 @@ class OpenFlamingo:
         vision_x = [self.image_processor(image).unsqueeze(0) for image in img_files]
         vision_x = torch.cat(vision_x, dim=0)
         vision_x = vision_x.unsqueeze(1).unsqueeze(0).cuda()
+        print(vision_x.shape)
         lang_x = self.tokenizer(qs, return_tensors="pt")
         generated_text = self.model.generate(
             vision_x=vision_x,
             lang_x=lang_x["input_ids"].cuda(),
             attention_mask=lang_x["attention_mask"].cuda(),
-            max_new_tokens=4096,
+            max_new_tokens=20,
             pad_token_id=self.tokenizer.pad_token_id,
             num_beams=1,
         )
