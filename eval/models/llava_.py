@@ -40,12 +40,10 @@ class LLava:
         image_sizes = []
         for batch_img in img_files:
             batch_img_tensor = process_images(batch_img, self.image_processor, self.model.config)
-            print(batch_img_tensor)
             batch_img_tensor = [_image.to(dtype=torch.float16, device=self.device) for _image in batch_img_tensor]
-            print(batch_img_tensor)
 
             batch_img_sizes = [image.size for image in batch_img]
-            print(batch_img_tensor)
+            print(batch_img_tensor.shape)
             
             image_tensors.append(batch_img_tensor)
             image_sizes.append(batch_img_sizes)
