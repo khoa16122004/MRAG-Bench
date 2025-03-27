@@ -35,12 +35,14 @@ def bench_data_loader(args, image_placeholder="<image>", special_token=None):
         
         image = item['image'].convert("RGB") # input image
 
-        if scenario == 'Incomplete': # incomplete is just using one gt image
-            gt_images = [gt_images[0]]
+
         
         ### our evaluation instuction for all the models 
-        image_files = [image] + gt_images
-
+        if args.use_rag:
+            image_files = [image] + gt_images
+        else:
+            image_files = [image]
+            
         prompt = f"You will be given one question concerning several images. The first image is the input image, others are retrieved examples to help you. Answer with the option's letter from the given choices directly. {image_placeholder}{image_placeholder}{image_placeholder}{image_placeholder}{image_placeholder}{image_placeholder}\n"
         qs += f"\n Choices:\nA: {choices_A}\nB: {choices_B}\nC: {choices_C}\nD: {choices_D}"
         final_qs = prompt + qs
