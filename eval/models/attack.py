@@ -43,10 +43,10 @@ def init_model(args):
         image_token = "<image_placeholder>"
         model = DeepSeek(args.pretrained)
     
-    return model, image_token
+    return model, image_token, special_token
 
 def main(args):
-    model, image_token = init_model(args)
+    model, image_token, special_token = init_model(args)
     
     for item in bench_data_loader(args, image_placeholder=image_token, special_token=special_token):
         qs = item['question']
