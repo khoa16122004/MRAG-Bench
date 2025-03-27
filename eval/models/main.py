@@ -42,10 +42,12 @@ def main(args):
         
         qs = item['question']
         img_files = item['image_files']
+        gt_ans = item['gt_choice']
         
         output = model.inference(qs, img_files)[0]
         print("Question: ", qs)
         print("Output: ", output)
+        print("GT answer: ", gt_ans)
         
 
 if __name__ == "__main__":
