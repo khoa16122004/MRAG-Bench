@@ -33,6 +33,11 @@ def main(args):
 
         model = OpenFlamingo(args.pretrained)
     
+    elif "mantis" in args.model_name:
+        from mantis_ import Matis
+        image_token = "<image>"
+        model = Matis(args.pretrained)
+    
     for item in bench_data_loader(args, image_placeholder=image_token, special_token=special_token):
         
         qs = item['question']

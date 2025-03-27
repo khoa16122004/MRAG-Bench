@@ -5,6 +5,7 @@ import io
 from PIL import Image
 from tqdm.auto import tqdm
 from datasets import load_dataset
+from torch.utils.data import Dataset
 
 def bench_data_loader(args, image_placeholder="<image>", special_token=None):
     """ 
@@ -38,52 +39,53 @@ def bench_data_loader(args, image_placeholder="<image>", special_token=None):
             gt_images = [gt_images[0]]
         
         ### our evaluation instuction for all the models 
-        if not args.use_rag: 
-            prompt = f"Answer with the option's letter from the given choices directly. {image_placeholder}\n"
-            if special_token:
-                prompt = f"Answer with the option's letter from the given choices directly.{special_token}{image_placeholder}\n"
+        image_files = [image] + gt_images
 
-            # prompt = f"First, answer with the option's letter from the given choices. Then, explain your reasoning.{image_placeholder}\n"
-            image_files = [image]
-        else: 
-            image_files = [image] + gt_images
-            # prompt = f"You will be given one question concerning several images. The first image is the input image, others are retrieved examples to help you. Answer with the option's letter from the given choices directly. {image_placeholder}{image_placeholder}{image_placeholder}{image_placeholder}{image_placeholder}{image_placeholder}\n"
-            # if special_token:
-            #     prompt = f"You will be given one question concerning several images. The first image is the input image, others are retrieved examples to help you. Answer with the option's letter from the given choices directly.{special_token}{image_placeholder}{image_placeholder}{image_placeholder}{image_placeholder}{image_placeholder}{image_placeholder}"
-            # # prompt = f"You will be given one question concerning several images. The first image is the input image, others are retrieved examples to help you. First, answer with the option's letter from the given choices and explain your reasoning. {image_placeholder}{image_placeholder}{image_placeholder}{image_placeholder}{image_placeholder}{image_placeholder}\n"
-            # if scenario == 'Incomplete':
-            #     prompt = f"You will be given one question concerning several images. The first image is the input image, others are retrieved examples to help you. Answer with the option's letter from the given choices directly. {image_placeholder}{image_placeholder}\n"
-            #     # prompt = f"You will be given one question concerning several images. The first image is the input image, others are retrieved examples to help you. First, answer with the option's letter from the given choices. Then, explain your reasoning.. {image_placeholder}{image_placeholder}\n"
-
-        # qs += f"\n Choices:\nA: {choices_A}\nB: {choices_B}\nC: {choices_C}\nD: {choices_D}"
+        prompt = f"You will be given one question concerning several images. The first image is the input image, others are retrieved examples to help you. Answer with the option's letter from the given choices directly. {image_placeholder}{image_placeholder}{image_placeholder}{image_placeholder}{image_placeholder}{image_placeholder}\n"
+        qs += f"\n Choices:\nA: {choices_A}\nB: {choices_B}\nC: {choices_C}\nD: {choices_D}"
+        final_qs = prompt + qs
         
-        # prompt_question_part = qs
-        # prompt_instruction_part = prompt
-        # qs = prompt + qs
-        prompt = "You will be given one question concerning several images. The first image is the input image, others are retrieved examples to help you. Answer with the option's letter from the given choices directly."
-        qs = f"{prompt}{qs}{special_token}{image_placeholder}{image_placeholder}{image_placeholder}{image_placeholder}{image_placeholder}{image_placeholder}"
-        # if special_token:
-        #     qs += special_token
-        
-        if args.use_rag: 
-            if args.use_retrieved_examples:
-                retrieved_images = item['retrieved_images']
-                retrieved_images = [ib.convert("RGB") if isinstance(ib, Image.Image) else Image.open(io.BytesIO(ib['bytes'])).convert("RGB") for ib in retrieved_images]
-                if scenario == 'Incomplete':
-                    retrieved_images = [retrieved_images[0]]
-                image_files = [image] + retrieved_images
-    
-        cur_prompt = args.extra_prompt + qs
-
         yield {
             "id": qs_id, 
-            "question": qs, 
+            "question": final_qs, 
             "image_files": image_files, 
-            "prompt": cur_prompt,
             "answer": ans,
             "gt_choice": gt_choice,
             "scenario": scenario,
-            "prompt_question_part": prompt_question_part,
-            "prompt_instruction_part": prompt_instruction_part,
             "aspect": item['aspect']
         }
+
+
+class CustomImageDataset(Dataset):
+    def __init__(self, extract_dir):
+        self.extract_dir = extract_dir
+        self.ids = os.listdir(extract_dir)
+        
+        
+
+    def __len__(self):
+        return len(self.ids)
+    def __getitem__(self, idx):
+        id_ = self.ids[idx]
+        id_dir = os.path.join(self.extract_dir, id_)
+        
+        imgs = []
+        
+        for file_name in os.listdir(id_dir):
+            if file_name.startswith("gt_"):
+                image = Image.open(os.path.join(id_dir, file_name)).convert("RGB")
+                imgs.append(image)
+            elif file_name.strartswith("question_img"):
+                question_img = Image.open(os.path.join(id_dir, file_name)).convert("RGB")   
+            else:
+                with open(os.path.join(id_dir, file_name), 'r') as f:
+                     lines = f.readlines()
+                     lines = [line.strip() for line in lines]
+                     question = lines[0].split(':')[1].strip()
+                     choice_A = lines[2].split(':')[1].strip()
+                     choice_B = lines[3].split(':')[1].strip()
+                     choice_C = lines[4].split(':')[1].strip()
+                     choice_D = lines[5].split(':')[1].strip()
+                     gt_choice = lines[7].split(':')[1].strip()     
+                     
+            return question_img, question, (choice_A, choice_B, choice_C, choice_D, )     
