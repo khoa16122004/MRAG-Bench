@@ -34,7 +34,7 @@ def main(args):
         model = OpenFlamingo(args.pretrained)
     
     elif "mantis" in args.model_name:
-        from mantis_ import Matis
+        from mantis_ import Mantis
         image_token = "<image>"
         model = Matis(args.pretrained)
     
