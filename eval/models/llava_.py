@@ -37,6 +37,7 @@ class LLava:
     
     def encode_image_batch(self, img_files):
         image_tensors = []
+        image_sizes = []
         for batch_img in image_tensors:
             batch_img_tensor = process_images(batch_img, self.image_processor, self.model.config)
             batch_img_tensor = [_image.to(dtype=torch.float16, device=self.device) for _image in batch_img_tensor]
@@ -52,7 +53,7 @@ class LLava:
     def inference(self, qs, img_files): 
         
         input_ids = self.encode_text_batch(qs)
-        print("input ids: ", input_ids)
+        print("input ids: ", input_ids.shape)
         image_tensors, image_sizes = self.encode_image_batch(img_files)
         print("image tensor: ", image_tensors.shape)
                     
