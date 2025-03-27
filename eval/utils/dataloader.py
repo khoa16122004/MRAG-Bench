@@ -47,20 +47,23 @@ def bench_data_loader(args, image_placeholder="<image>", special_token=None):
             image_files = [image]
         else: 
             image_files = [image] + gt_images
-            prompt = f"You will be given one question concerning several images. The first image is the input image, others are retrieved examples to help you. Answer with the option's letter from the given choices directly. {image_placeholder}{image_placeholder}{image_placeholder}{image_placeholder}{image_placeholder}{image_placeholder}\n"
-            if special_token:
-                prompt = f"You will be given one question concerning several images. The first image is the input image, others are retrieved examples to help you. Answer with the option's letter from the given choices directly.{special_token}{image_placeholder}{image_placeholder}{image_placeholder}{image_placeholder}{image_placeholder}{image_placeholder}"
-            # prompt = f"You will be given one question concerning several images. The first image is the input image, others are retrieved examples to help you. First, answer with the option's letter from the given choices and explain your reasoning. {image_placeholder}{image_placeholder}{image_placeholder}{image_placeholder}{image_placeholder}{image_placeholder}\n"
-            if scenario == 'Incomplete':
-                prompt = f"You will be given one question concerning several images. The first image is the input image, others are retrieved examples to help you. Answer with the option's letter from the given choices directly. {image_placeholder}{image_placeholder}\n"
-                # prompt = f"You will be given one question concerning several images. The first image is the input image, others are retrieved examples to help you. First, answer with the option's letter from the given choices. Then, explain your reasoning.. {image_placeholder}{image_placeholder}\n"
+            # prompt = f"You will be given one question concerning several images. The first image is the input image, others are retrieved examples to help you. Answer with the option's letter from the given choices directly. {image_placeholder}{image_placeholder}{image_placeholder}{image_placeholder}{image_placeholder}{image_placeholder}\n"
+            # if special_token:
+            #     prompt = f"You will be given one question concerning several images. The first image is the input image, others are retrieved examples to help you. Answer with the option's letter from the given choices directly.{special_token}{image_placeholder}{image_placeholder}{image_placeholder}{image_placeholder}{image_placeholder}{image_placeholder}"
+            # # prompt = f"You will be given one question concerning several images. The first image is the input image, others are retrieved examples to help you. First, answer with the option's letter from the given choices and explain your reasoning. {image_placeholder}{image_placeholder}{image_placeholder}{image_placeholder}{image_placeholder}{image_placeholder}\n"
+            # if scenario == 'Incomplete':
+            #     prompt = f"You will be given one question concerning several images. The first image is the input image, others are retrieved examples to help you. Answer with the option's letter from the given choices directly. {image_placeholder}{image_placeholder}\n"
+            #     # prompt = f"You will be given one question concerning several images. The first image is the input image, others are retrieved examples to help you. First, answer with the option's letter from the given choices. Then, explain your reasoning.. {image_placeholder}{image_placeholder}\n"
 
         # qs += f"\n Choices:\nA: {choices_A}\nB: {choices_B}\nC: {choices_C}\nD: {choices_D}"
+        
         prompt_question_part = qs
         prompt_instruction_part = prompt
-        qs = prompt + qs
-        if special_token:
-            qs += special_token
+        # qs = prompt + qs
+        prompt = "You will be given one question concerning several images. The first image is the input image, others are retrieved examples to help you. Answer with the option's letter from the given choices directly."
+        qs = f"{prompt}{qs}{special_token}{image_placeholder}{image_placeholder}{image_placeholder}{image_placeholder}{image_placeholder}{image_placeholder}"
+        # if special_token:
+        #     qs += special_token
         
         if args.use_rag: 
             if args.use_retrieved_examples:
