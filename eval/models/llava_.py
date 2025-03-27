@@ -43,7 +43,6 @@ class LLava:
             batch_img_tensor = [_image.to(dtype=torch.float16, device=self.device) for _image in batch_img_tensor]
 
             batch_img_sizes = [image.size for image in batch_img]
-            print(batch_img_tensor.shape)
             
             image_tensors.append(batch_img_tensor)
             image_sizes.append(batch_img_sizes)
