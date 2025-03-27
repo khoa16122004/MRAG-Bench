@@ -34,14 +34,16 @@ def bench_data_loader(args, image_placeholder="<image>", special_token=None):
         gt_images = [ib.convert("RGB") if isinstance(ib, Image.Image) else Image.open(io.BytesIO(ib['bytes'])).convert("RGB") for ib in gt_images]
         
         image = item['image'].convert("RGB") # input image
-
+        number_images = len(gt_images) + 1
 
         
         ### our evaluation instuction for all the models 
         if args.use_rag:
             image_files = [image] + gt_images
-            prompt = f"You will be given one question concerning several images. The first image is the input image, others are retrieved examples to help you. Answer with the option's letter from the given choices directly. {image_placeholder}{image_placeholder}{image_placeholder}{image_placeholder}{image_placeholder}{image_placeholder}\n"
-
+            prompt = f"You will be given one question concerning several images. The first image is the input image, others are retrieved examples to help you. Answer with the option's letter from the given choices directly."
+            for _ in range(number_images):
+                prompt += f"{image_placeholder}"
+            prompt += "\n"
         else:
             image_files = [image]
             prompt = f"You will be given one question concerning several images. The first image is the input image, others are retrieved examples to help you. Answer with the option's letter from the given choices directly. {image_placeholder}\n"
