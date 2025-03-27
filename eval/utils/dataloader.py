@@ -83,7 +83,7 @@ def bench_data_loader(args, image_placeholder="<image>", special_token=None):
             "answer": ans,
             "gt_choice": gt_choice,
             "scenario": scenario,
-            "prompt_question_part": prompt_question_part,
-            "prompt_instruction_part": prompt_instruction_part,
+            # "prompt_question_part": prompt_question_part,
+            # "prompt_instruction_part": prompt_instruction_part,
             "aspect": item['aspect']
         }
