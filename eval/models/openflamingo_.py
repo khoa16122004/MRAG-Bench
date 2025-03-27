@@ -32,11 +32,11 @@ class OpenFlamingo:
             vision_x=vision_x,
             lang_x=lang_x["input_ids"].cuda(),
             attention_mask=lang_x["attention_mask"].cuda(),
-            max_new_tokens=100,  # Giữ hợp lý
+            max_new_tokens=100,
             pad_token_id=self.tokenizer.pad_token_id,
-            num_beams=5,  # Beam search để đa dạng hóa kết quả
-            temperature=0.8,  # Tăng randomness
-            top_p=0.9,  # Nucleus sampling để tránh lặp input
+            num_beams=5, 
+            temperature=0.8,  
+            top_p=0.9,  
         )
 
         output = self.tokenizer.decode(generated_text[0].tolist(), skip_special_tokens=True)
