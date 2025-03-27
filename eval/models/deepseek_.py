@@ -45,7 +45,7 @@ class DeepSeek:
         )
 
         answer = self.tokenizer.decode(outputs[0].cpu().tolist(), skip_special_tokens=True)
-        return
+        return answer
         
         
         
