@@ -32,7 +32,7 @@ class OpenFlamingo:
             attention_mask=lang_x["attention_mask"].cuda(),
             max_new_tokens=4096,
             pad_token_id=self.tokenizer.pad_token_id,
-            num_beams=3,
+            num_beams=1,
         )
         output = self.tokenizer.decode(generated_text[0], skip_special_tokens=True).strip()
         return output
