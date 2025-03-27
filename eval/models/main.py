@@ -56,7 +56,6 @@ def main(args):
         ans_id = shortuuid.uuid()
         ans_file.write(json.dumps({
                                    "qs_id": item['id'],
-                                   "prompt": item['prompt'],
                                    "output": output,
                                    "gt_answer": item['answer'],
                                    "shortuuid": ans_id,
