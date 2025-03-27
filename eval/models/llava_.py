@@ -48,7 +48,6 @@ class LLava:
             image_tensors.append(batch_img_tensor)
             image_sizes.append(batch_img_sizes)
 
-        image_tensors = torch.stack(image_tensors)
 
         return image_tensors, image_sizes
         
