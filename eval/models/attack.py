@@ -146,7 +146,7 @@ def main(args):
         gt_answer = item['answer']
         
         for j, img in enumerate(img_files):
-            img.save(f"clean_{i}.png")
+            img.save(f"clean_{j}.png")
         original_output = model.inference(qs, img_files)[0]
         print("Question: ", qs)
         print("Original output: ", original_output)
