@@ -79,7 +79,7 @@ import torch.nn.functional as F
 sim_model = SentenceTransformer('all-MiniLM-L6-v2')
 def FreeText_benchmark(args, image_tensors, input_ids, image_sizes, 
                        gt_answer, pertubation_list, model):
-    adv_img_tensors = torch.clip(image_tensors + pertubation_list, 0, 1).cuda()
+    adv_img_tensors = torch.clip(image_tensors + pertubation_list).cuda()
     adv_pil_images = model.decode_image_tensors(adv_img_tensors)
     output = model.inference(input_ids, adv_img_tensors, image_sizes)[0]
     
