@@ -83,7 +83,10 @@ def ES_1_1(args, model, image_files, qs, sample_gt, epsilon=0.03, c_increase=1.2
     history = [best_fitness]
 
     num_evaluation = 1
-    while num_evaluation < max_query and best_fitness > 0:
+    for i in tqdm(range(1, max_query)):
+        if best_fitness > 0:
+            break
+        
         alpha = torch.randn_like(img_tensors).cuda()
         alpha = torch.clamp(alpha, -epsilon, epsilon)
 

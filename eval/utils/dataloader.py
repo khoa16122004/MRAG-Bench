@@ -41,12 +41,11 @@ def bench_data_loader(args, image_placeholder="<image>", special_token=None):
         gt_images = [ib.convert("RGB").resize((350, 500)) if isinstance(ib, Image.Image) else Image.open(io.BytesIO(ib['bytes'])).convert("RGB") for ib in gt_images]
         
         image = item['image'].convert("RGB").resize((350, 500)) # input image
-        number_images = args.num_retrieval + 1
         
         # prompt = f"You will be given one question concerning several images. The first image is the input image, others are retrieved examples to help you. Answer with the option's letter from the given choices directly. {image_placeholder}"
         prompt = f"You will be given one question concerning several images. The first image is the input image, others are retrieved examples to help you. Answer reason with the option's letter for your answer from the given choices directly. {image_placeholder}"
         image_files = [image]
-        for i in range(number_images):
+        for i in range(args.num_retrieval):
             image_files.append(gt_images[i])
             prompt += image_placeholder
 
