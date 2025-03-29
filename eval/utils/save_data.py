@@ -1,4 +1,4 @@
-from dataloader import load_dataset
+from eval.models.dataloader import load_dataset
 from tqdm import tqdm
 from PIL import Image
 import io
