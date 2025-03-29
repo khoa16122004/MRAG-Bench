@@ -80,7 +80,9 @@ def FreeText_benchmark(args, img_tensors, qs, gt_answer, pertubation_list, model
     
     output = model.inference(qs, adv_pil_images)[0]
     
-    P, R, F1 = score([output], [gt_answer], model_type="roberta-large", lang="en")
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        P, R, F1 = score([output], [gt_answer], model_type="roberta-large", lang="en")
     
     return 0.5 - F1.item(), adv_pil_images
     
