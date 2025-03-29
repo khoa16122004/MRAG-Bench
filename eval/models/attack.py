@@ -52,11 +52,8 @@ def main(args):
         qs = item['question']
         img_files = item['image_files']
         gt_ans = item['gt_choice']
-        
-        qss = [qs, qs, qs]
-        batch_img_files = [img_files, img_files, img_files]
-        
-        text_outputs = model.inference(qss, batch_img_files)
+                
+        text_outputs = model.inference(qs, img_files)
         print(text_outputs)
 
 if __name__ == "__main__":
