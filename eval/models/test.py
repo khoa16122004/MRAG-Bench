@@ -18,7 +18,7 @@ import math
 from llava_ import LLava
 from torchvision import transforms
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
-from utils.dataloader import bench_data_loader 
+from eval.models.dataloader import bench_data_loader 
 
 def main(args):
     toTensor = transforms.ToTensor()

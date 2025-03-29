@@ -67,11 +67,11 @@ def bench_data_loader(args, image_placeholder="<image>", special_token=None):
 
 def multi_QA_loader(image_placeholder):
     dataset = datasets.load_dataset("TIGER-Lab/Mantis-Instruct", "multi_vqa", revision="script")
-    data_train = dataset['train']
-    is_sample = False
-    for item in tqdm(data_train):
+    
+    for item in tqdm(dataset['train']):
         id = item['id']
-        img_path = item['images']
+        image_data = item['images']
+        img_path = [image_data[i_]['path'] for i_ in image_data]
         img_files = [ib.convert("RGB").resize((224, 224)) if isinstance(ib, Image.Image) else Image.open(io.BytesIO(ib['bytes'])).convert("RGB") for ib in img_path]
         conversations = item['conversation']
         
