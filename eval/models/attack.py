@@ -91,8 +91,7 @@ def save_gif(images, filename, duration=0.2):
     
 def ES_1_1(args, benchmark, id, model, image_files, qs, gt_answer, epsilon=0.05, c_increase=1.2, c_decrease=0.8, sigma=1.1):
     totensor = transforms.ToTensor()
-    for j, img in enumerate(image_files):
-        img.save(f"clean_{i}_{j}.png")
+
     img_tensors = torch.stack([totensor(img) for img in image_files]).cuda()
     
     pertubation_list = torch.randn_like(img_tensors).cuda()
@@ -140,11 +139,14 @@ def main(args):
     acc = 0
     run = 0
     
-    for item in multi_QA_loader(image_placeholder=image_token):
+    for i, item in enumerate(multi_QA_loader(image_placeholder=image_token)):
         id = item['id']
         qs = item['question']
         img_files = item['image_files'] # list of pil_image
         gt_answer = item['answer']
+        
+        for j, img in enumerate(image_files):
+            img.save(f"clean_{i}.png")
         original_output = model.inference(qs, img_files)[0]
         print("Question: ", qs)
         print("Original output: ", original_output)
