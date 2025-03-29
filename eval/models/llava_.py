@@ -54,7 +54,7 @@ class LLava:
         
         input_ids = self.encode_text_batch(qs)
         image_tensors, image_sizes = self.encode_image_batch(img_files)
-        print("Input_ids: ", input_ids.shape, "Image_tensors: ", image_tensors.shape, "Image_sizes: ", image_sizes)
+        # print("Input_ids: ", input_ids.shape, "Image_tensors: ", image_tensors.shape, "Image_sizes: ", image_sizes)
         
         with torch.inference_mode():
             cont = self.model.generate(
