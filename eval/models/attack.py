@@ -115,7 +115,7 @@ def main(args):
         img_files = item['image_files']
         gt_ans = item['gt_choice']
         print("Question: ", qs)
-        print(f"Answer {gt_ans}: {item['sample_gt']['gt_ans']}")
+        print(f"Answer {gt_ans}: {item['sample_gt'][gt_ans]}")
                 
         text_outputs = model.inference(qs, img_files)[0]
         print("original Output: ", text_outputs)
