@@ -86,7 +86,7 @@ def benchmark(args, img_tensors, qs, sample_gt, pertubation_list, model):
     # elif args.bench == simple
 
 
-def ES_1_1(args, model, image_files, qs, sample_gt, epsilon=0.03, c_increase=1.2, c_decrease=0.8, sigma=1.1, max_query=5):
+def ES_1_1(args, model, image_files, qs, sample_gt, epsilon=0.03, c_increase=1.2, c_decrease=0.8, sigma=1.1):
     totensor = transforms.ToTensor()
     img_tensors = torch.stack([totensor(img) for img in image_files]).cuda()
     
@@ -98,14 +98,13 @@ def ES_1_1(args, model, image_files, qs, sample_gt, epsilon=0.03, c_increase=1.2
     history = [best_fitness]
 
     num_evaluation = 1
-    for i in tqdm(range(1, max_query)):
+    for i in tqdm(range(1, args.max_query)):
         if best_fitness > 0:
             break
         
-        alpha = torch.randn_like(img_tensors).cuda() * epsilon
-
-        new_pertubation_list = pertubation_list + alpha * sigma 
-        new_pertubation_list = torch.clamp(new_pertubation_list, -epsilon, epsilon)
+        alpha = torch.randn_like(img_tensors).cuda() * sigma
+        alpha = torch.clamp(alpha, -epsilon, epsilon)
+        new_pertubation_list = pertubation_list + alpha
 
         new_fitness, adv_img_files = benchmark(args, img_tensors, qs, sample_gt, new_pertubation_list, model)
 
@@ -160,6 +159,7 @@ if __name__ == "__main__":
     parser.add_argument("--num_retrieval", type=int, default=1)
     parser.add_argument("--pretrained", type=str, default="llava-onevision-qwen2-7b-ov")
     parser.add_argument("--model_name", type=str, default="llava_qwen")
+    parser.add_argument("--max_query", type=int, default=1000)
     args = parser.parse_args()
 
     main(args)
