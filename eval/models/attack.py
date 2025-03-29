@@ -73,7 +73,7 @@ def benchmark(args, img_tensors, qs, sample_gt, pertubation_list, model):
     output = model.inference(qs, adv_pil_images)[0]
     if output in ['A', 'B', 'C', 'D']:
         # choice = sample_answer['output']    
-        acc = 1 if output == sample_gt['gt_choice'] else 0
+        acc = 1 if output != sample_gt['gt_choice'] else 0
         return acc, adv_pil_images
     else:
         raise Exception("Output not in ['A', 'B', 'C', 'D']")
@@ -89,7 +89,6 @@ def benchmark(args, img_tensors, qs, sample_gt, pertubation_list, model):
 def ES_1_1(args, model, image_files, qs, sample_gt, epsilon=0.03, c_increase=1.2, c_decrease=0.8, sigma=1.1, max_query=1000):
     totensor = transforms.ToTensor()
     img_tensors = torch.stack([totensor(img) for img in image_files]).cuda()
-    print("Image tensors: ", img_tensors.shape)
     
     pertubation_list = torch.randn_like(img_tensors).cuda()
     pertubation_list = torch.clamp(pertubation_list, -epsilon, epsilon)
