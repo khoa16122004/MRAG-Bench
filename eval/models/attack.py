@@ -84,7 +84,7 @@ def FreeText_benchmark(args, img_tensors, qs, gt_answer, pertubation_list, model
         warnings.simplefilter("ignore")
         P, R, F1 = score([output], [gt_answer], model_type="microsoft/deberta-xlarge-mnli", lang="en")
     
-    return 0.5 - F1.item(), adv_pil_images
+    return 0.5 - F1.item(), adv_pil_images, output
     
 def save_gif(images, filename, duration=0.2):
     imageio.mimsave(filename, images, duration=duration)
@@ -96,7 +96,7 @@ def ES_1_1(args, benchmark, id, model, image_files, qs, gt_answer, epsilon=0.05,
     pertubation_list = torch.randn_like(img_tensors).cuda()
     pertubation_list = torch.clamp(pertubation_list, -epsilon, epsilon)
     
-    best_fitness, adv_img_files = benchmark(args, img_tensors, qs, gt_answer, pertubation_list, model)
+    best_fitness, adv_img_files, output = benchmark(args, img_tensors, qs, gt_answer, pertubation_list, model)
     best_img_files_adv = adv_img_files
     history = [best_fitness]
     success = False
@@ -114,7 +114,8 @@ def ES_1_1(args, benchmark, id, model, image_files, qs, gt_answer, epsilon=0.05,
         alpha = torch.clamp(alpha, -epsilon, epsilon)
         new_pertubation_list = pertubation_list + alpha
 
-        new_fitness, adv_img_files = benchmark(args, img_tensors, qs, gt_answer, new_pertubation_list, model)
+        new_fitness, adv_img_files, output = benchmark(args, img_tensors, qs, gt_answer, new_pertubation_list, model)
+        print("current output: ", output)
         for img in adv_img_files:
             img.save(f"adv_{id}_{i}.png")
             
