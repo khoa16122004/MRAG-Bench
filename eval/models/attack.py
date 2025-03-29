@@ -73,6 +73,10 @@ def MultiChoice_benchmark(args, img_tensors, qs, sample_gt, pertubation_list, mo
     else:
         raise Exception("Output not in ['A', 'B', 'C', 'D']")
     
+from sentence_transformers import SentenceTransformer
+import torch.nn.functional as F
+
+sim_model = SentenceTransformer('all-MiniLM-L6-v2')
 def FreeText_benchmark(args, img_tensors, qs, gt_answer, pertubation_list, model):
     to_pil = transforms.ToPILImage()
     adv_img_tensors = torch.clip(img_tensors + pertubation_list, 0, 1).cuda()
@@ -80,11 +84,12 @@ def FreeText_benchmark(args, img_tensors, qs, gt_answer, pertubation_list, model
     
     output = model.inference(qs, adv_pil_images)[0]
     
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
-        P, R, F1 = score([output], [gt_answer], model_type="microsoft/deberta-xlarge-mnli", lang="en")
-    
-    return 0.5 - R.item(), adv_pil_images, output
+    emb1 = sim_model.encode(output, convert_to_tensor=True)
+    emb2 = sim_model.encode(gt_answer, convert_to_tensor=True)
+
+    similarity = F.cosine_similarity(emb1.unsqueeze(0), emb2.unsqueeze(0)).item()
+
+    return 1 - similarity, adv_pil_images, output
     
 def save_gif(images, filename, duration=0.2):
     imageio.mimsave(filename, images, duration=duration)
