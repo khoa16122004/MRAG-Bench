@@ -65,7 +65,7 @@ def bench_data_loader(args, image_placeholder="<image>", special_token=None):
         }
 
 
-def multi_QA_loader(dataset, image_placeholder):
+def multi_QA_loader(image_placeholder):
     dataset = datasets.load_dataset("TIGER-Lab/Mantis-Instruct", "multi_vqa", revision="script")
     data_train = dataset['train']
     is_sample = False

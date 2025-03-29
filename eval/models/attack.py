@@ -131,7 +131,7 @@ def main(args):
     acc = 0
     run = 0
     
-    for item in multi_QA_loader(args, image_placeholder=image_token, special_token=special_token):
+    for item in multi_QA_loader(image_placeholder=special_token):
         id = item['id']
         qs = item['question']
         img_files = item['image_files'] # list of pil_image
