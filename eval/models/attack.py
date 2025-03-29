@@ -102,8 +102,8 @@ def ES_1_1(args, id, model, image_files, qs, sample_gt, epsilon=0.05, c_increase
     success = False
     num_evaluation = 1
 
-    adv_history_0 = [adv_img_files[0]]
-    adv_history_1 = [adv_img_files[1]]
+    # adv_history_0 = [adv_img_files[0]]
+    # adv_history_1 = [adv_img_files[1]]
 
     for i in tqdm(range(1, args.max_query)):
         if best_fitness > 0:
@@ -127,11 +127,11 @@ def ES_1_1(args, id, model, image_files, qs, sample_gt, epsilon=0.05, c_increase
         history.append(best_fitness)
         num_evaluation += 1
 
-        adv_history_0.append(adv_img_files[0])
-        adv_history_1.append(adv_img_files[1])
+        # adv_history_0.append(adv_img_files[0])
+        # adv_history_1.append(adv_img_files[1])
 
-    save_gif(adv_history_0, f"{id}_adv_0.gif")
-    save_gif(adv_history_1, f"{id}_adv_1.gif")
+    # save_gif(adv_history_0, f"{id}_adv_0.gif")
+    # save_gif(adv_history_1, f"{id}_adv_1.gif")
 
     return num_evaluation, pertubation_list, best_img_files_adv, success
     
