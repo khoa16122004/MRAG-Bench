@@ -103,7 +103,7 @@ def ES_1_1(args, benchmark, id, model,
     image_tensor_torch = torch.stack(image_tensors).cuda()
     pertubation_list = torch.randn_like(image_tensor_torch).cuda()
     pertubation_list = torch.clamp(pertubation_list, -epsilon, epsilon)
-    
+
     best_fitness, adv_img_files, output = benchmark(args, image_tensor_torch, input_ids, image_sizes, 
                                                     gt_answer, pertubation_list, model)
     best_img_files_adv = adv_img_files
@@ -117,11 +117,12 @@ def ES_1_1(args, benchmark, id, model,
     for i in tqdm(range(1, args.max_query)):
 
         
-        alpha = torch.randn_like(image_tensor_torch).cuda() * epsilon
-        new_pertubation_list = pertubation_list + alpha
+        alpha = torch.randn_like(image_tensor_torch).cuda()
+        new_pertubation_list =  torch.clamp(pertubation_list + alpha, -epsilon, epsilon)
 
+        
         new_fitness, adv_img_files, output = benchmark(args, image_tensor_torch, input_ids, image_sizes, 
-                                                       gt_answer, pertubation_list, model)
+                                                       gt_answer, new_pertubation_list, model)
         print("current output: ", output)
         for j, img in enumerate(adv_img_files):
             img.save(f"adv_{i}_{j}.png")
