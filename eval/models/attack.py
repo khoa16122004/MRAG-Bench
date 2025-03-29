@@ -52,7 +52,9 @@ def main(args):
         qs = item['question']
         img_files = item['image_files']
         gt_ans = item['gt_choice']
-                
+        
+        print(gt_ans)
+        
         text_outputs = model.inference(qs, img_files)
         print("Output: ", text_outputs)
 
