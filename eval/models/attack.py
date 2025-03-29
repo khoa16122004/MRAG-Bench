@@ -102,8 +102,8 @@ def ES_1_1(args, model, image_files, qs, sample_gt, epsilon=0.05, c_increase=1.2
     success = False
     num_evaluation = 1
 
-    adv_history_0 = [adv_img_files[0].detach().cpu()]
-    adv_history_1 = [adv_img_files[1].detach().cpu()]
+    adv_history_0 = [adv_img_files[0]]
+    adv_history_1 = [adv_img_files[1]]
 
     for i in tqdm(range(1, args.max_query)):
         if best_fitness > 0:
