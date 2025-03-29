@@ -24,18 +24,22 @@ class LLava:
         self.model.eval()
         
     
+    def repair_input(self, qs, img_files):
+        conv = copy.deepcopy(conv_templates["qwen_1_5"])
+        conv.append_message(conv.roles[0], qs)
+        conv.append_message(conv.roles[1], None)
+        prompt_question = conv.get_prompt()
+        input_ids = tokenizer_image_token(prompt_question, self.tokenizer, IMAGE_TOKEN_INDEX, return_tensors="pt").unsqueeze(0).to(self.device)
+        image_tensors = process_images(img_files, self.image_processor, self.model.config)
+        image_tensors = [_image.to(dtype=torch.float16, device=self.device) for _image in image_tensors]
+        print(self.image_processor)
+        image_sizes = [image.size for image in img_files]
+        return input_ids, image_tensors, image_sizes
     
-    def inference(self, qs, img_files):
+    def inference(self, input_ids, image_tensors, image_sizes):
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            conv = copy.deepcopy(conv_templates["qwen_1_5"])
-            conv.append_message(conv.roles[0], qs)
-            conv.append_message(conv.roles[1], None)
-            prompt_question = conv.get_prompt()
-            input_ids = tokenizer_image_token(prompt_question, self.tokenizer, IMAGE_TOKEN_INDEX, return_tensors="pt").unsqueeze(0).to(self.device)
-            image_tensors = process_images(img_files, self.image_processor, self.model.config)
-            image_tensors = [_image.to(dtype=torch.float16, device=self.device) for _image in image_tensors]
-            image_sizes = [image.size for image in img_files]
+            # input_ids, image_tensors, image_sizes = self.repair_input(qs, img_files)
                         
             with torch.inference_mode():
                 cont = self.model.generate(

@@ -151,7 +151,8 @@ def main(args):
         
         for j, img in enumerate(img_files):
             img.save(f"clean_{j}.png")
-        original_output = model.inference(qs, img_files)[0]
+        input_ids, image_tensors, image_sizes = model.repair_input(qs, img_files)
+        original_output = model.inference(input_ids, image_tensors, image_sizes)[0]
         print("Question: ", qs)
         print("Original output: ", original_output)
         print("Ground truth answer: ", gt_answer)
