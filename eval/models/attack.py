@@ -84,7 +84,7 @@ def FreeText_benchmark(args, image_tensors, input_ids, image_sizes,
     adv_pil_images = model.decode_image_tensors(adv_img_tensors)
     output = model.inference(input_ids, adv_img_tensors, image_sizes)[0]
     
-    print("diff: ", (adv_img_tensors - image_tensors.mean()))
+    print("diff: ", (adv_img_tensors - image_tensors).mean())
     
     emb1 = sim_model.encode(output, convert_to_tensor=True)
     emb2 = sim_model.encode(gt_answer, convert_to_tensor=True)
