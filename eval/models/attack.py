@@ -67,7 +67,7 @@ def init_model(args):
 def benchmark(args, img_tensors, qs, sample_gt, pertubation_list, model):
     # if args.bench == mulitchoice
     to_pil = transforms.ToPILImage()
-    adv_img_tensors = img_tensors + pertubation_list
+    adv_img_tensors = torch.clip(img_tensors + pertubation_list, 0, 1)
     adv_pil_images = [to_pil(img) for img in adv_img_tensors.cpu()]
     
     output = model.inference(qs, adv_pil_images)[0]
