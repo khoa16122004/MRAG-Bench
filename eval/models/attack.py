@@ -124,6 +124,7 @@ def ES_1_1(args, benchmark, id, model, image_files, qs, gt_answer, epsilon=0.05,
         else:
             sigma *= c_decrease
 
+        print("best fitness: ", best_fitness, "sigma: ", sigma)
         history.append(best_fitness)
         num_evaluation += 1
 
