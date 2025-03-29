@@ -72,7 +72,7 @@ def benchmark(args, img_tensors, qs, sample_answer, pertubation_list, model):
 
 def ES_1_1(args, model, image_files, qs, gt_ans, epsilon=0.03, c_increase=1.2, c_decrease=0.8, sigma=1.1, max_query=1000):
     totensor = transforms.ToTensor()
-    img_tensors = torch.stack([totensor(img) for img in image_files])
+    img_tensors = torch.stack([totensor(img) for img in image_files]).cuda()
     print("Image tensors: ", img_tensors.shape)
     
     pertubation_list = torch.randn_like(img_tensors).cuda()
