@@ -17,6 +17,22 @@ from PIL import Image
 import math
 from torchvision import transforms
 
+def seed_everything(seed: int):
+    import random, os
+    import numpy as np
+    import torch
+    
+    random.seed(seed)
+    os.environ['PYTHONHASHSEED'] = str(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed(seed)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = True
+    
+seed_everything(22520691)
+
+
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from utils.dataloader import bench_data_loader 
 
@@ -132,8 +148,14 @@ def main(args):
             print("Wrong, skip")
             continue
         
+        for i, img in enumerate(img_files_adv):
+            if i == 0:
+                img.save(f"question.png")
+            img.save(f"img_adv_{i}.png")
+        
         text_outputs = model.inference(qs, img_files_adv)[0]
-        print("adv Output: ", text_outputs)        
+        print("adv Output: ", text_outputs)     
+        break   
         
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
