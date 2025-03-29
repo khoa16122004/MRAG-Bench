@@ -118,7 +118,7 @@ def ES_1_1(args, benchmark, id, model, image_files, qs, gt_answer, epsilon=0.05,
         print("current output: ", output)
         for img in adv_img_files:
             img.save(f"adv_{id}_{i}.png")
-            
+        input()
         if new_fitness > best_fitness:
             best_fitness = new_fitness
             best_img_files_adv = adv_img_files
