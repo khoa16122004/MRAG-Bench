@@ -31,6 +31,13 @@ def bench_data_loader(args, image_placeholder="<image>", special_token=None):
         choices_C = item['C']
         choices_D = item['D']
         gt_images = item['gt_images']
+        samples_gt = {
+            'A': choices_A,
+            'B': choices_B,
+            'C': choices_C,
+            'D': choices_D,
+            'gt_choice': gt_choice
+        }
         gt_images = [ib.convert("RGB") if isinstance(ib, Image.Image) else Image.open(io.BytesIO(ib['bytes'])).convert("RGB") for ib in gt_images]
         
         image = item['image'].convert("RGB") # input image
@@ -59,6 +66,7 @@ def bench_data_loader(args, image_placeholder="<image>", special_token=None):
         final_qs = prompt + "\n" + qs
         
         yield {
+            "sample_gt": samples_gt, 
             "id": qs_id, 
             "question": final_qs, 
             "image_files": image_files, 
