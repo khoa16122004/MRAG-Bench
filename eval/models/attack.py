@@ -89,7 +89,7 @@ def benchmark(args, img_tensors, qs, sample_gt, pertubation_list, model):
 def save_gif(images, filename, duration=0.2):
     imageio.mimsave(filename, images, duration=duration)
     
-def ES_1_1(args, model, image_files, qs, sample_gt, epsilon=0.05, c_increase=1.2, c_decrease=0.8, sigma=1.1):
+def ES_1_1(args, id, model, image_files, qs, sample_gt, epsilon=0.05, c_increase=1.2, c_decrease=0.8, sigma=1.1):
     totensor = transforms.ToTensor()
     img_tensors = torch.stack([totensor(img) for img in image_files]).cuda()
     
@@ -130,8 +130,8 @@ def ES_1_1(args, model, image_files, qs, sample_gt, epsilon=0.05, c_increase=1.2
         adv_history_0.append(adv_img_files[0])
         adv_history_1.append(adv_img_files[1])
 
-    save_gif(adv_history_0, f"{args.id}_adv_0.gif")
-    save_gif(adv_history_1, f"{args.id}_adv_1.gif")
+    save_gif(adv_history_0, f"{id}_adv_0.gif")
+    save_gif(adv_history_1, f"{id}_adv_1.gif")
 
     return num_evaluation, pertubation_list, best_img_files_adv, success
     
@@ -153,7 +153,7 @@ def main(args):
         if text_outputs[0] == gt_ans:
             run += 1
             print("Correct, ready to attack")
-            num_evaluation, pertubation_list, img_files_adv, success = ES_1_1(args, model, img_files, qs, sample_gt)
+            num_evaluation, pertubation_list, img_files_adv, success = ES_1_1(args, item['id'], model, img_files, qs, sample_gt)
             print("Num evaluation for attacking: ", num_evaluation)
         else:
             print("Wrong, skip")
