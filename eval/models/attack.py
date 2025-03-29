@@ -115,7 +115,9 @@ def ES_1_1(args, benchmark, id, model, image_files, qs, gt_answer, epsilon=0.05,
         new_pertubation_list = pertubation_list + alpha
 
         new_fitness, adv_img_files = benchmark(args, img_tensors, qs, gt_answer, new_pertubation_list, model)
-
+        for img in adv_img_files:
+            img.save(f"adv_{id}_{i}.png")
+            
         if new_fitness > best_fitness:
             best_fitness = new_fitness
             best_img_files_adv = adv_img_files
