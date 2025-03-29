@@ -15,6 +15,7 @@ import sys
 import warnings
 from PIL import Image
 import math
+from torchvision import transforms
 
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from utils.dataloader import bench_data_loader 
@@ -45,6 +46,48 @@ def init_model(args):
     
     return model, image_token, special_token
 
+
+def benchmark(args, img_tensors, qs, gt_ans, pertubation_list):
+    # if args.bench == mulitchoice
+    
+    # elif args.bench == simple
+
+
+def ES_1_1(args, image_files, qs, gt_ans, epsilon=0.03, c_increase=1.2, c_decrease=0.8, sigma=1.1, max_query=1000):
+    totensor = transforms.ToTensor()
+    img_tensors = torch.stack([totensor(img) for img in image_files])
+    print("Image tensors: ", img_tensors.shape)
+    
+    pertubation_list = torch.randn_like(img_tensors).cuda()
+    pertubation_list = torch.clamp(pertubation_list, -epsilon, epsilon)
+    
+    best_fitness = benchmark(args, img_tensors, qs, gt_ans, pertubation_list)
+    history = [best_fitness]
+    
+    num_evaluation = 1
+    while num_evaluation < max_query and attack_success(best_fitness) == False:
+        alpha = torch.randn_like(img_tensors).cuda()
+        alpha = torch.clamp(alpha, -epsilon, epsilon)
+
+        new_pertubation_list = pertubation_list + alpha * sigma 
+        new_pertubation_list = torch.clamp(new_pertubation_list, -epsilon, epsilon)
+
+        new_fitness = benchmark(args, img_tensors, qs, gt_ans, new_pertubation_list)
+
+        if new_fitness > best_fitness:
+            best_fitness = new_fitness
+            pertubation_list = new_pertubation_list
+            sigma *= c_increase
+        else:
+            sigma *= c_decrease
+            
+
+        history.append(best_fitness)
+        
+        num_evaluation += 1
+
+    return evaluation, pertubation_list
+    
 def main(args):
     model, image_token, special_token = init_model(args)
     
@@ -52,6 +95,9 @@ def main(args):
         qs = item['question']
         img_files = item['image_files']
         gt_ans = item['gt_choice']
+        
+        
+        
         
         print(gt_ans)
         
