@@ -94,7 +94,7 @@ def FreeText_benchmark(args, img_tensors, qs, gt_answer, pertubation_list, model
 def save_gif(images, filename, duration=0.2):
     imageio.mimsave(filename, images, duration=duration)
     
-def ES_1_1(args, benchmark, id, model, image_files, qs, gt_answer, epsilon=0.05, c_increase=1.2, c_decrease=0.8, sigma=1.1):
+def ES_1_1(args, benchmark, id, model, image_files, qs, gt_answer, epsilon=0.05, c_increase=1.2, c_decrease=0.8, sigma=1.5):
     totensor = transforms.ToTensor()
 
     img_tensors = torch.stack([totensor(img) for img in image_files]).cuda()
