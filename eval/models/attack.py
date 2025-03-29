@@ -84,7 +84,7 @@ def FreeText_benchmark(args, img_tensors, qs, gt_answer, pertubation_list, model
         warnings.simplefilter("ignore")
         P, R, F1 = score([output], [gt_answer], model_type="microsoft/deberta-xlarge-mnli", lang="en")
     
-    return 0.8 - F1.item(), adv_pil_images, output
+    return 0.5 - F1.item(), adv_pil_images, output
     
 def save_gif(images, filename, duration=0.2):
     imageio.mimsave(filename, images, duration=duration)
