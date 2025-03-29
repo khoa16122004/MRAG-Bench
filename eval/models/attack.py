@@ -115,17 +115,13 @@ def ES_1_1(args, benchmark, id, model,
     # adv_history_1 = [adv_img_files[1]]
 
     for i in tqdm(range(1, args.max_query)):
-
-        
         alpha = torch.randn_like(image_tensor_torch).cuda()
         new_pertubation_list =  torch.clamp(pertubation_list + alpha, -epsilon, epsilon)
 
-        
         new_fitness, adv_img_files, output = benchmark(args, image_tensor_torch, input_ids, image_sizes, 
                                                        gt_answer, new_pertubation_list, model)
         print("current output: ", output)
-        for j, img in enumerate(adv_img_files):
-            img.save(f"adv_{i}_{j}.png")
+
         if new_fitness > best_fitness:
             best_fitness = new_fitness
             best_img_files_adv = adv_img_files
@@ -166,7 +162,10 @@ def main(args):
                                                                               image_tensors, image_sizes, input_ids, gt_answer, 
                                                                               epsilon=args.epsilon, c_increase=1.2, c_decrease=0.8, sigma=1.5)
         print("success: ", success)
-        print("Adv output: ", model.inference(qs, best_img_files_adv)[0])
+        if success == True:
+            for j, img in enumerate(best_img_files_adv):
+                img.save(f"adv_{j}.png")
+        # print("Adv output: ", model.inference(qs, best_img_files_adv)[0])
         
         # break
     # print(f"Accuracy run={run} max_query={args.max_query} num_retreival={args.num_retrieval}: {acc/run}")
