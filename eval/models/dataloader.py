@@ -72,14 +72,13 @@ def multi_QA_loader(image_placeholder):
         id = item['id']
         image_data = item['images']
         img_path = [image['path'] for image in image_data]
-        print(img_path)
         img_files = [Image.open(path).convert("RGB").resize((224, 224)) for path in img_path]
         conversations = item['conversation']
-        
+        number_of_image = img_path(conversation['images'])
+
         for i, conversation in enumerate(conversations):
             if i % 2 == 0: # user
                 question = conversation['content']
-                number_of_image = len(conversation['images'])
                 # remove the "<image>" placeholder from question
                 question = question.replace("<image>", "") + image_placeholder * number_of_image
             else: # assistant
