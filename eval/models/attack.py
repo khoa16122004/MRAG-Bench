@@ -156,7 +156,7 @@ def main(args):
         print("Original output: ", original_output)
         print("Ground truth answer: ", gt_answer)
         
-        num_evaluation, pertubation_list, best_img_files_adv, success =ES_1_1(args, FreeText_benchmark, id, model, img_files, qs, gt_answer, epsilon=args.epsilon, c_increase=1.2, c_decrease=0.8, sigma=1.1)
+        num_evaluation, pertubation_list, best_img_files_adv, success =ES_1_1(args, FreeText_benchmark, id, model, img_files, qs, gt_answer, epsilon=args.epsilon, c_increase=1.2, c_decrease=0.8, sigma=1.5)
         print("success: ", success)
         print("Adv output: ", model.inference(qs, best_img_files_adv)[0])
         
