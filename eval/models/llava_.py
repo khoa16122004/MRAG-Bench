@@ -48,7 +48,7 @@ class LLava:
             image_sizes.append(batch_img_sizes)
 
 
-        return torch.stack(image_tensors), image_sizes
+        return image_tensors, image_sizes
         
     def inference(self, qs, img_files): 
         
