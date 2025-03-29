@@ -77,12 +77,13 @@ from sentence_transformers import SentenceTransformer
 import torch.nn.functional as F
 
 sim_model = SentenceTransformer('all-MiniLM-L6-v2')
-def FreeText_benchmark(args, img_tensors, qs, gt_answer, pertubation_list, model):
+def FreeText_benchmark(args, image_tensors, input_ids, image_sizes, 
+                       gt_answer, pertubation_list, model):
     to_pil = transforms.ToPILImage()
-    adv_img_tensors = torch.clip(img_tensors + pertubation_list, 0, 1).cuda()
-    adv_pil_images = [to_pil(img) for img in adv_img_tensors.cpu()]
+    adv_img_tensors = torch.clip(image_tensors + pertubation_list, 0, 1).cuda()
+    adv_pil_images = model.decode_image_tensors(adv_img_tensors)
     
-    output = model.inference(qs, adv_pil_images)[0]
+    output = model.inference(input_ids, image_tensors, image_sizes)[0]
     
     emb1 = sim_model.encode(output, convert_to_tensor=True)
     emb2 = sim_model.encode(gt_answer, convert_to_tensor=True)
@@ -94,15 +95,16 @@ def FreeText_benchmark(args, img_tensors, qs, gt_answer, pertubation_list, model
 def save_gif(images, filename, duration=0.2):
     imageio.mimsave(filename, images, duration=duration)
     
-def ES_1_1(args, benchmark, id, model, image_files, qs, gt_answer, epsilon=0.05, c_increase=1.2, c_decrease=0.8, sigma=1.5):
-    totensor = transforms.ToTensor()
+def ES_1_1(args, benchmark, id, model, 
+           image_tensors, image_sizes, input_ids, gt_answer, 
+           epsilon=0.05, c_increase=1.2, c_decrease=0.8, sigma=1.5):
 
-    img_tensors = torch.stack([totensor(img) for img in image_files]).cuda()
-    
-    pertubation_list = torch.randn_like(img_tensors).cuda()
+    image_tensor_torch = torch.stack(image_tensors).cuda()
+    pertubation_list = torch.randn_like(image_tensor_torch).cuda()
     pertubation_list = torch.clamp(pertubation_list, -epsilon, epsilon)
     
-    best_fitness, adv_img_files, output = benchmark(args, img_tensors, qs, gt_answer, pertubation_list, model)
+    best_fitness, adv_img_files, output = benchmark(args, image_tensor_torch, input_ids, image_sizes, 
+                                                    gt_answer, pertubation_list, model)
     best_img_files_adv = adv_img_files
     history = [best_fitness]
     success = False
@@ -114,11 +116,12 @@ def ES_1_1(args, benchmark, id, model, image_files, qs, gt_answer, epsilon=0.05,
     for i in tqdm(range(1, args.max_query)):
 
         
-        alpha = torch.randn_like(img_tensors).cuda()
+        alpha = torch.randn_like(image_tensor_torch).cuda()
         alpha = torch.clamp(alpha, -epsilon, epsilon)
         new_pertubation_list = pertubation_list + alpha
 
-        new_fitness, adv_img_files, output = benchmark(args, img_tensors, qs, gt_answer, new_pertubation_list, model)
+        new_fitness, adv_img_files, output = benchmark(args, image_tensor_torch, input_ids, image_sizes, 
+                                                       gt_answer, pertubation_list, model)
         print("current output: ", output)
         for j, img in enumerate(adv_img_files):
             img.save(f"adv_{i}_{j}.png")
@@ -152,15 +155,15 @@ def main(args):
         for j, img in enumerate(img_files):
             img.save(f"clean_{j}.png")
         input_ids, image_tensors, image_sizes = model.repair_input(qs, img_files)
-        reverse_image = model.decode_image_tensors(image_tensors)
-        for j, img in enumerate(reverse_image):
-            img.save(f"reverse_{j}.png")
+
         original_output = model.inference(input_ids, image_tensors, image_sizes)[0]
         print("Question: ", qs)
         print("Original output: ", original_output)
         print("Ground truth answer: ", gt_answer)
         
-        num_evaluation, pertubation_list, best_img_files_adv, success =ES_1_1(args, FreeText_benchmark, id, model, img_files, qs, gt_answer, epsilon=args.epsilon, c_increase=1.2, c_decrease=0.8, sigma=1.5)
+        num_evaluation, pertubation_list, best_img_files_adv, success =ES_1_1(args, FreeText_benchmark, id, model, 
+                                                                              image_tensors, image_sizes, input_ids, gt_answer, 
+                                                                              epsilon=args.epsilon, c_increase=1.2, c_decrease=0.8, sigma=1.5)
         print("success: ", success)
         print("Adv output: ", model.inference(qs, best_img_files_adv)[0])
         
