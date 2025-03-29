@@ -70,7 +70,7 @@ def benchmark(args, img_tensors, qs, sample_answer, pertubation_list, model):
     # elif args.bench == simple
 
 
-def ES_1_1(args, image_files, qs, gt_ans, epsilon=0.03, c_increase=1.2, c_decrease=0.8, sigma=1.1, max_query=1000):
+def ES_1_1(args, model, image_files, qs, gt_ans, epsilon=0.03, c_increase=1.2, c_decrease=0.8, sigma=1.1, max_query=1000):
     totensor = transforms.ToTensor()
     img_tensors = torch.stack([totensor(img) for img in image_files])
     print("Image tensors: ", img_tensors.shape)
@@ -78,7 +78,7 @@ def ES_1_1(args, image_files, qs, gt_ans, epsilon=0.03, c_increase=1.2, c_decrea
     pertubation_list = torch.randn_like(img_tensors).cuda()
     pertubation_list = torch.clamp(pertubation_list, -epsilon, epsilon)
     
-    best_fitness, adv_img_files = benchmark(args, img_tensors, qs, gt_ans, pertubation_list)
+    best_fitness, adv_img_files = benchmark(args, img_tensors, qs, gt_ans, pertubation_list, model)
     best_img_files_adv = adv_img_files
     history = [best_fitness]
 
@@ -90,7 +90,7 @@ def ES_1_1(args, image_files, qs, gt_ans, epsilon=0.03, c_increase=1.2, c_decrea
         new_pertubation_list = pertubation_list + alpha * sigma 
         new_pertubation_list = torch.clamp(new_pertubation_list, -epsilon, epsilon)
 
-        new_fitness, adv_img_files = benchmark(args, img_tensors, qs, gt_ans, new_pertubation_list)
+        new_fitness, adv_img_files = benchmark(args, img_tensors, qs, gt_ans, new_pertubation_list, model)
 
         if new_fitness > best_fitness:
             best_fitness = new_fitness
@@ -122,7 +122,7 @@ def main(args):
 
         if text_outputs[0] == gt_ans:
             print("Correct, ready to attack")
-            num_evaluation, pertubation_list, img_files_adv = ES_1_1(args, img_files, qs, gt_ans)
+            num_evaluation, pertubation_list, img_files_adv = ES_1_1(args, model, img_files, qs, gt_ans)
             print("Num evaluation for attacking: ", num_evaluation)
         else:
             print("Wrong, skip")
