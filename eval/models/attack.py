@@ -120,9 +120,9 @@ def ES_1_1(args, benchmark, id, model, image_files, qs, gt_answer, epsilon=0.05,
             best_fitness = new_fitness
             best_img_files_adv = adv_img_files
             pertubation_list = new_pertubation_list
-            sigma *= c_increase
-        else:
-            sigma *= c_decrease
+        #     sigma *= c_increase
+        # else:
+        #     sigma *= c_decrease
 
         print("best fitness: ", best_fitness, "sigma: ", sigma)
         history.append(best_fitness)
