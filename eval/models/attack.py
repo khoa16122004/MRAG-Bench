@@ -86,7 +86,7 @@ def benchmark(args, img_tensors, qs, sample_gt, pertubation_list, model):
     # elif args.bench == simple
 
 
-def ES_1_1(args, model, image_files, qs, sample_gt, epsilon=0.03, c_increase=1.2, c_decrease=0.8, sigma=1.1, max_query=1000):
+def ES_1_1(args, model, image_files, qs, sample_gt, epsilon=0.03, c_increase=1.2, c_decrease=0.8, sigma=1.1, max_query=5):
     totensor = transforms.ToTensor()
     img_tensors = torch.stack([totensor(img) for img in image_files]).cuda()
     
@@ -102,8 +102,7 @@ def ES_1_1(args, model, image_files, qs, sample_gt, epsilon=0.03, c_increase=1.2
         if best_fitness > 0:
             break
         
-        alpha = torch.randn_like(img_tensors).cuda()
-        alpha = torch.clamp(alpha, -epsilon, epsilon)
+        alpha = torch.randn_like(img_tensors).cuda() * epsilon
 
         new_pertubation_list = pertubation_list + alpha * sigma 
         new_pertubation_list = torch.clamp(new_pertubation_list, -epsilon, epsilon)
@@ -127,7 +126,7 @@ def ES_1_1(args, model, image_files, qs, sample_gt, epsilon=0.03, c_increase=1.2
     
 def main(args):
     model, image_token, special_token = init_model(args)
-    
+    acc = 0
     for item in bench_data_loader(args, image_placeholder=image_token, special_token=special_token):
         qs = item['question']
         img_files = item['image_files']
@@ -150,7 +149,8 @@ def main(args):
         for i, img in enumerate(img_files_adv):
             if i == 0:
                 img.save(f"question.png")
-            img.save(f"img_adv_{i}.png")
+            else:
+                img.save(f"img_adv_{i}.png")
         
         text_outputs = model.inference(qs, img_files_adv)[0]
         print("adv Output: ", text_outputs)     
