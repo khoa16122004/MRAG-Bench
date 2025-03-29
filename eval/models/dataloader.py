@@ -73,7 +73,7 @@ def multi_QA_loader(image_placeholder):
         image_data = item['images']
         img_path = [image['path'] for image in image_data]
         print(img_path)
-        img_files = [Image.open(image) for image in image_data]
+        img_files = [Image.open(path) for path in img_path]
         img_files = [ib.convert("RGB").resize((224, 224)) if isinstance(ib, Image.Image) else Image.open(io.BytesIO(ib['bytes'])).convert("RGB") for ib in img_path]
         conversations = item['conversation']
         
