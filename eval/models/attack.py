@@ -54,7 +54,7 @@ def main(args):
         gt_ans = item['gt_choice']
                 
         text_outputs = model.inference(qs, img_files)
-        print(text_outputs)
+        print("Output: ", text_outputs)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
