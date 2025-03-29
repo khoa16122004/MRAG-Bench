@@ -155,8 +155,7 @@ def main(args):
         
         text_outputs = model.inference(qs, img_files_adv)[0]
         print("adv Output: ", text_outputs)     
-        break   
-        
+        input()        
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--num_retrieval", type=int, default=1)
