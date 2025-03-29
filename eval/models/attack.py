@@ -51,6 +51,7 @@ def benchmark(args, img_tensors, qs, gt_ans, pertubation_list):
     # if args.bench == mulitchoice
     
     # elif args.bench == simple
+    pass
 
 
 def ES_1_1(args, image_files, qs, gt_ans, epsilon=0.03, c_increase=1.2, c_decrease=0.8, sigma=1.1, max_query=1000):
