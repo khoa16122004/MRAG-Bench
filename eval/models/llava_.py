@@ -2,6 +2,7 @@ from llava.model.builder import load_pretrained_model
 from llava.mm_utils import get_model_name_from_path, process_images, tokenizer_image_token
 from llava.constants import IMAGE_TOKEN_INDEX, DEFAULT_IMAGE_TOKEN, DEFAULT_IM_START_TOKEN, DEFAULT_IM_END_TOKEN, IGNORE_INDEX
 from llava.conversation import conv_templates, SeparatorStyle
+import torchvision.transforms as transforms
 import copy
 import torch
 import warnings
@@ -24,6 +25,17 @@ class LLava:
         self.model.eval()
         
     
+    def decode_image_tensors(self, image_tensors, image_mean=(0.5, 0.5, 0.5), image_std=(0.5, 0.5, 0.5)):
+        unnormalize = transforms.Normalize(
+            mean=[-m / s for m, s in zip(image_mean, image_std)],
+            std=[1 / s for s in image_std]
+        )
+
+        to_pil = transforms.ToPILImage()
+        pil_images = [to_pil(unnormalize(img.cpu())) for img in image_tensors]
+
+        return pil_images
+    
     def repair_input(self, qs, img_files):
         conv = copy.deepcopy(conv_templates["qwen_1_5"])
         conv.append_message(conv.roles[0], qs)
@@ -32,7 +44,6 @@ class LLava:
         input_ids = tokenizer_image_token(prompt_question, self.tokenizer, IMAGE_TOKEN_INDEX, return_tensors="pt").unsqueeze(0).to(self.device)
         image_tensors = process_images(img_files, self.image_processor, self.model.config)
         image_tensors = [_image.to(dtype=torch.float16, device=self.device) for _image in image_tensors]
-        print(self.image_processor)
         image_sizes = [image.size for image in img_files]
         return input_ids, image_tensors, image_sizes
     
