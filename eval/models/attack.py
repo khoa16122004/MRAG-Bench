@@ -117,7 +117,6 @@ def ES_1_1(args, benchmark, id, model, image_files, qs, gt_answer, epsilon=0.05,
         print("current output: ", output)
         for j, img in enumerate(adv_img_files):
             img.save(f"adv_{i}_{j}.png")
-        input()
         if new_fitness > best_fitness:
             best_fitness = new_fitness
             best_img_files_adv = adv_img_files
@@ -156,8 +155,8 @@ def main(args):
         print("success: ", success)
         print("Adv output: ", model.inference(qs, best_img_files_adv)[0])
         
-        break
-    print(f"Accuracy run={run} max_query={args.max_query} num_retreival={args.num_retrieval}: {acc/run}")
+        # break
+    # print(f"Accuracy run={run} max_query={args.max_query} num_retreival={args.num_retrieval}: {acc/run}")
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--num_retrieval", type=int, default=1)
