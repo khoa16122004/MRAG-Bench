@@ -87,7 +87,6 @@ def benchmark(args, img_tensors, qs, sample_gt, pertubation_list, model):
     # elif args.bench == simple
 
 def save_gif(images, filename, duration=0.2):
-    images = [transforms.ToPILImage()(img.cpu().clamp(0, 1)) for img in images]
     imageio.mimsave(filename, images, duration=duration)
     
 def ES_1_1(args, model, image_files, qs, sample_gt, epsilon=0.05, c_increase=1.2, c_decrease=0.8, sigma=1.1):
@@ -128,8 +127,8 @@ def ES_1_1(args, model, image_files, qs, sample_gt, epsilon=0.05, c_increase=1.2
         history.append(best_fitness)
         num_evaluation += 1
 
-        adv_history_0.append(adv_img_files[0].detach().cpu())
-        adv_history_1.append(adv_img_files[1].detach().cpu())
+        adv_history_0.append(adv_img_files[0])
+        adv_history_1.append(adv_img_files[1])
 
     save_gif(adv_history_0, f"{args.id}_adv_0.gif")
     save_gif(adv_history_1, f"{args.id}_adv_1.gif")
