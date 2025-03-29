@@ -110,7 +110,7 @@ def ES_1_1(args, benchmark, id, model, image_files, qs, gt_answer, epsilon=0.05,
             success = True
             break
         
-        alpha = torch.randn_like(img_tensors).cuda() * sigma
+        alpha = torch.randn_like(img_tensors).cuda()
         alpha = torch.clamp(alpha, -epsilon, epsilon)
         new_pertubation_list = pertubation_list + alpha
 
