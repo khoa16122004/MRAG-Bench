@@ -152,7 +152,6 @@ def main(args):
         for j, img in enumerate(img_files):
             img.save(f"clean_{j}.png")
         input_ids, image_tensors, image_sizes = model.repair_input(qs, img_files)
-        print(image_tensors.shape)
         reverse_image = model.decode_image_tensors(image_tensors)
         for j, img in enumerate(reverse_image):
             img.save(f"reverse_{j}.png")
