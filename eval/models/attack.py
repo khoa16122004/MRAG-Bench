@@ -16,6 +16,8 @@ from PIL import Image
 import math
 from torchvision import transforms
 from dataloader import multi_QA_loader
+import warnings
+warnings.filterwarnings("ignore")
 def seed_everything(seed: int):
     import random, os
     import numpy as np
