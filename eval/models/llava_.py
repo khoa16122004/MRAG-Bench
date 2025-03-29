@@ -23,39 +23,19 @@ class LLava:
         self.tokenizer, self.model, self.image_processor, _ = load_pretrained_model(self.pretrained, None, model_name, device_map=self.device_map, **self.llava_model_args)
         self.model.eval()
         
-    def encode_text_batch(self, qs): 
-        inputs_ids = []
-        for question in qs:
-            conv = copy.deepcopy(conv_templates["qwen_1_5"])
-            conv.append_message(conv.roles[0], question)
-            conv.append_message(conv.roles[1], None)
-            prompt_question = conv.get_prompt()
-            input_id = tokenizer_image_token(prompt_question, self.tokenizer, IMAGE_TOKEN_INDEX, return_tensors="pt").to(self.device)
-            inputs_ids.append(input_id)
-        
-        return torch.stack(inputs_ids)  
     
-    def encode_image_batch(self, img_files):
-        image_tensors = []
-        image_sizes = []
-        for batch_img in img_files:
-            batch_img_tensor = process_images(batch_img, self.image_processor, self.model.config)
-            batch_img_tensor = torch.stack([_image.to(dtype=torch.float16, device=self.device) for _image in batch_img_tensor])
-
-            batch_img_sizes = [image.size for image in batch_img]
-            
-            image_tensors.append(batch_img_tensor)
-            image_sizes.append(batch_img_sizes)
-
-
-        return image_tensors, image_sizes
+    
+    def inference(self, qs, img_files):
         
-    def inference(self, qs, img_files): 
-        
-        input_ids = self.encode_text_batch(qs)
-        image_tensors, image_sizes = self.encode_image_batch(img_files)
-        # print("Input_ids: ", input_ids.shape, "Image_tensors: ", image_tensors.shape, "Image_sizes: ", image_sizes)
-        
+        conv = copy.deepcopy(conv_templates["qwen_1_5"])
+        conv.append_message(conv.roles[0], qs)
+        conv.append_message(conv.roles[1], None)
+        prompt_question = conv.get_prompt()
+        input_ids = tokenizer_image_token(prompt_question, self.tokenizer, IMAGE_TOKEN_INDEX, return_tensors="pt").unsqueeze(0).to(self.device)
+        image_tensors = process_images(img_files, self.image_processor, self.model.config)
+        image_tensors = [_image.to(dtype=torch.float16, device=self.device) for _image in image_tensors]
+        image_sizes = [image.size for image in img_files]
+                    
         with torch.inference_mode():
             cont = self.model.generate(
             input_ids,
@@ -67,4 +47,5 @@ class LLava:
         )
 
         text_outputs = self.tokenizer.batch_decode(cont, skip_special_tokens=True)
-        return text_outputs
+        outputs = text_outputs
+        return outputs
