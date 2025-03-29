@@ -80,7 +80,7 @@ def FreeText_benchmark(args, img_tensors, qs, gt_answer, pertubation_list, model
     
     P, R, F1 = score([output], [gt_answer], model_type="roberta-large", lang="en")
     
-    return 0.5 - F1.item()
+    return 0.5 - F1.item(), adv_pil_images
     
 def save_gif(images, filename, duration=0.2):
     imageio.mimsave(filename, images, duration=duration)
