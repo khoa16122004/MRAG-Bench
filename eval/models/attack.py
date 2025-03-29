@@ -107,9 +107,7 @@ def ES_1_1(args, benchmark, id, model, image_files, qs, gt_answer, epsilon=0.05,
     # adv_history_1 = [adv_img_files[1]]
 
     for i in tqdm(range(1, args.max_query)):
-        if best_fitness > 0:
-            success = True
-            break
+
         
         alpha = torch.randn_like(img_tensors).cuda()
         alpha = torch.clamp(alpha, -epsilon, epsilon)
@@ -131,7 +129,9 @@ def ES_1_1(args, benchmark, id, model, image_files, qs, gt_answer, epsilon=0.05,
         print("best fitness: ", best_fitness, "sigma: ", sigma)
         history.append(best_fitness)
         num_evaluation += 1
-
+        if best_fitness > 0:
+            success = True
+            break
     return num_evaluation, pertubation_list, best_img_files_adv, success
     
 def main(args):
