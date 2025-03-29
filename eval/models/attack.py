@@ -145,7 +145,7 @@ def main(args):
         img_files = item['image_files'] # list of pil_image
         gt_answer = item['answer']
         
-        for j, img in enumerate(image_files):
+        for j, img in enumerate(img_files):
             img.save(f"clean_{i}.png")
         original_output = model.inference(qs, img_files)[0]
         print("Question: ", qs)
