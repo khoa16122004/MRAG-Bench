@@ -71,29 +71,28 @@ def MultiChoice_benchmark(args, img_tensors, qs, sample_gt, pertubation_list, mo
     else:
         raise Exception("Output not in ['A', 'B', 'C', 'D']")
     
-def FreeText_benchmark(args, img_tensors, qs, sample_gt, pertubation_list, model):
+def FreeText_benchmark(args, img_tensors, qs, gt_answer, pertubation_list, model):
     to_pil = transforms.ToPILImage()
     adv_img_tensors = torch.clip(img_tensors + pertubation_list, 0, 1).cuda()
     adv_pil_images = [to_pil(img) for img in adv_img_tensors.cpu()]
     
     output = model.inference(qs, adv_pil_images)[0]
     
-    gt_answers = sample_gt['gt_answer'] 
-    P, R, F1 = score([output], [gt_answers], model_type="roberta-large", lang="en")
+    P, R, F1 = score([output], [gt_answer], model_type="roberta-large", lang="en")
     
     return 0.5 - F1.item()
     
 def save_gif(images, filename, duration=0.2):
     imageio.mimsave(filename, images, duration=duration)
     
-def ES_1_1(args, benchmark, id, model, image_files, qs, sample_gt, epsilon=0.05, c_increase=1.2, c_decrease=0.8, sigma=1.1):
+def ES_1_1(args, benchmark, id, model, image_files, qs, gt_answer, epsilon=0.05, c_increase=1.2, c_decrease=0.8, sigma=1.1):
     totensor = transforms.ToTensor()
     img_tensors = torch.stack([totensor(img) for img in image_files]).cuda()
     
     pertubation_list = torch.randn_like(img_tensors).cuda()
     pertubation_list = torch.clamp(pertubation_list, -epsilon, epsilon)
     
-    best_fitness, adv_img_files = benchmark(args, img_tensors, qs, sample_gt, pertubation_list, model)
+    best_fitness, adv_img_files = benchmark(args, img_tensors, qs, gt_answer, pertubation_list, model)
     best_img_files_adv = adv_img_files
     history = [best_fitness]
     success = False
