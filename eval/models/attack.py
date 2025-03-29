@@ -4,20 +4,18 @@ import os
 import json
 from tqdm import tqdm
 import shortuuid
-
 import imageio
-
+from bert_score import score
 from PIL import Image
 import requests
 import copy
 import torch
-
 import sys
 import warnings
 from PIL import Image
 import math
 from torchvision import transforms
-
+from dataloader import multi_QA_loader
 def seed_everything(seed: int):
     import random, os
     import numpy as np
@@ -35,7 +33,7 @@ seed_everything(22520691)
 
 
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
-from utils.dataloader import bench_data_loader 
+from eval.models.dataloader import bench_data_loader 
 
 def init_model(args):
     special_token = None
@@ -62,10 +60,8 @@ def init_model(args):
         model = DeepSeek(args.pretrained)
     
     return model, image_token, special_token
-    
 
-
-def benchmark(args, img_tensors, qs, sample_gt, pertubation_list, model):
+def MultiChoice_benchmark(args, img_tensors, qs, sample_gt, pertubation_list, model):
     # if args.bench == mulitchoice
     to_pil = transforms.ToPILImage()
     adv_img_tensors = torch.clip(img_tensors + pertubation_list, 0, 1).cuda()
@@ -79,17 +75,22 @@ def benchmark(args, img_tensors, qs, sample_gt, pertubation_list, model):
     else:
         raise Exception("Output not in ['A', 'B', 'C', 'D']")
     
-    # some how get the embedding from another model  like clip
-    # choice_embedidng = 
+def FreeText_benchmark(args, img_tensors, qs, sample_gt, pertubation_list, model):
+    to_pil = transforms.ToPILImage()
+    adv_img_tensors = torch.clip(img_tensors + pertubation_list, 0, 1).cuda()
+    adv_pil_images = [to_pil(img) for img in adv_img_tensors.cpu()]
     
+    output = model.inference(qs, adv_pil_images)[0]
     
+    gt_answers = sample_gt['gt_answer'] 
+    P, R, F1 = score([output], [gt_answers], model_type="roberta-large", lang="en")
     
-    # elif args.bench == simple
-
+    return 0.5 - F1.item()
+    
 def save_gif(images, filename, duration=0.2):
     imageio.mimsave(filename, images, duration=duration)
     
-def ES_1_1(args, id, model, image_files, qs, sample_gt, epsilon=0.05, c_increase=1.2, c_decrease=0.8, sigma=1.1):
+def ES_1_1(args, benchmark, id, model, image_files, qs, sample_gt, epsilon=0.05, c_increase=1.2, c_decrease=0.8, sigma=1.1):
     totensor = transforms.ToTensor()
     img_tensors = torch.stack([totensor(img) for img in image_files]).cuda()
     
@@ -127,49 +128,28 @@ def ES_1_1(args, id, model, image_files, qs, sample_gt, epsilon=0.05, c_increase
         history.append(best_fitness)
         num_evaluation += 1
 
-        # adv_history_0.append(adv_img_files[0])
-        # adv_history_1.append(adv_img_files[1])
-
-    # save_gif(adv_history_0, f"{id}_adv_0.gif")
-    # save_gif(adv_history_1, f"{id}_adv_1.gif")
-
     return num_evaluation, pertubation_list, best_img_files_adv, success
     
 def main(args):
     model, image_token, special_token = init_model(args)
     acc = 0
     run = 0
-    for item in bench_data_loader(args, image_placeholder=image_token, special_token=special_token):
+    
+    for item in multi_QA_loader(args, image_placeholder=image_token, special_token=special_token):
+        id = item['id']
         qs = item['question']
-        img_files = item['image_files']
-        gt_ans = item['gt_choice']
-        sample_gt = item['sample_gt']
+        img_files = item['image_files'] # list of pil_image
+        gt_answer = item['answer']
+        original_output = model.inference(qs, img_files)[0]
         print("Question: ", qs)
-        print(f"Answer {gt_ans}: {sample_gt[gt_ans]}")
-                
-        text_outputs = model.inference(qs, img_files)[0]
-        print("original Output: ", text_outputs)
-
-        if text_outputs[0] == gt_ans:
-            run += 1
-            print("Correct, ready to attack")
-            num_evaluation, pertubation_list, img_files_adv, success = ES_1_1(args, item['id'], model, img_files, qs, sample_gt)
-            print("Num evaluation for attacking: ", num_evaluation)
-        else:
-            print("Wrong, skip")
-            continue
+        print("Original output: ", original_output)
+        print("Ground truth answer: ", gt_answer)
         
-        for i, img in enumerate(img_files_adv):
-            if i == 0:
-                img.save(f"question.png")
-            else:
-                img.save(f"img_adv_{i}.png")
+        num_evaluation, pertubation_list, best_img_files_adv, success =ES_1_1(args, FreeText_benchmark, id, model, img_files, qs, gt_answer, epsilon=0.05, c_increase=1.2, c_decrease=0.8, sigma=1.1)
+        print("success: ", success)
+        print("Adv output: ", model.inference(qs, best_img_files_adv)[0])
         
-        text_outputs = model.inference(qs, img_files_adv)[0]
-        print("adv Output: ", text_outputs)     
-        if success == True:
-            acc += 1
-        
+        break
     print(f"Accuracy run={run} max_query={args.max_query} num_retreival={args.num_retrieval}: {acc/run}")
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
