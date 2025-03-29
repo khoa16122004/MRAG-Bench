@@ -90,7 +90,7 @@ def ES_1_1(args, model, image_files, qs, sample_gt, epsilon=0.03, c_increase=1.2
         new_pertubation_list = pertubation_list + alpha * sigma 
         new_pertubation_list = torch.clamp(new_pertubation_list, -epsilon, epsilon)
 
-        new_fitness, adv_img_files = benchmark(args, img_tensors, qs, sample_answer, new_pertubation_list, model)
+        new_fitness, adv_img_files = benchmark(args, img_tensors, qs, sample_gt, new_pertubation_list, model)
 
         if new_fitness > best_fitness:
             best_fitness = new_fitness
