@@ -91,6 +91,8 @@ def save_gif(images, filename, duration=0.2):
     
 def ES_1_1(args, benchmark, id, model, image_files, qs, gt_answer, epsilon=0.05, c_increase=1.2, c_decrease=0.8, sigma=1.1):
     totensor = transforms.ToTensor()
+    for j, img in enumerate(image_files):
+        img.save(f"clean_{i}_{j}.png")
     img_tensors = torch.stack([totensor(img) for img in image_files]).cuda()
     
     pertubation_list = torch.randn_like(img_tensors).cuda()
@@ -116,8 +118,8 @@ def ES_1_1(args, benchmark, id, model, image_files, qs, gt_answer, epsilon=0.05,
 
         new_fitness, adv_img_files, output = benchmark(args, img_tensors, qs, gt_answer, new_pertubation_list, model)
         print("current output: ", output)
-        for img in adv_img_files:
-            img.save(f"adv_{id}_{i}.png")
+        for j, img in enumerate(adv_img_files):
+            img.save(f"adv_{i}_{j}.png")
         input()
         if new_fitness > best_fitness:
             best_fitness = new_fitness
