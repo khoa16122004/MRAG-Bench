@@ -31,10 +31,6 @@ def seed_everything(seed: int):
     
 seed_everything(22520691)
 
-
-sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
-from eval.models.dataloader import bench_data_loader 
-
 def init_model(args):
     special_token = None
     if "llava" in args.model_name:
