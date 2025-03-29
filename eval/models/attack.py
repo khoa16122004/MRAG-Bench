@@ -96,10 +96,11 @@ def ES_1_1(args, model, image_files, qs, sample_gt, epsilon=0.03, c_increase=1.2
     best_fitness, adv_img_files = benchmark(args, img_tensors, qs, sample_gt, pertubation_list, model)
     best_img_files_adv = adv_img_files
     history = [best_fitness]
-
+    success = False
     num_evaluation = 1
     for i in tqdm(range(1, args.max_query)):
         if best_fitness > 0:
+            success = True
             break
         
         alpha = torch.randn_like(img_tensors).cuda() * sigma
@@ -121,11 +122,12 @@ def ES_1_1(args, model, image_files, qs, sample_gt, epsilon=0.03, c_increase=1.2
         
         num_evaluation += 1
 
-    return num_evaluation, pertubation_list, best_img_files_adv
+    return num_evaluation, pertubation_list, best_img_files_adv, success
     
 def main(args):
     model, image_token, special_token = init_model(args)
     acc = 0
+    run = 0
     for item in bench_data_loader(args, image_placeholder=image_token, special_token=special_token):
         qs = item['question']
         img_files = item['image_files']
@@ -138,8 +140,9 @@ def main(args):
         print("original Output: ", text_outputs)
 
         if text_outputs[0] == gt_ans:
+            run += 1
             print("Correct, ready to attack")
-            num_evaluation, pertubation_list, img_files_adv = ES_1_1(args, model, img_files, qs, sample_gt)
+            num_evaluation, pertubation_list, img_files_adv, success = ES_1_1(args, model, img_files, qs, sample_gt)
             print("Num evaluation for attacking: ", num_evaluation)
         else:
             print("Wrong, skip")
@@ -153,7 +156,10 @@ def main(args):
         
         text_outputs = model.inference(qs, img_files_adv)[0]
         print("adv Output: ", text_outputs)     
-        input()        
+        if success == True:
+            acc += 1
+        
+    print(f"Accuracy run={run} max_query={args.max_query} num_retreival={args.num_retrieval}: {acc/run}")
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--num_retrieval", type=int, default=1)
