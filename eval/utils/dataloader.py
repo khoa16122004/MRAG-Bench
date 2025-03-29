@@ -37,7 +37,7 @@ def bench_data_loader(args, image_placeholder="<image>", special_token=None):
         number_images = args.num_retrieval + 1
         
         # prompt = f"You will be given one question concerning several images. The first image is the input image, others are retrieved examples to help you. Answer with the option's letter from the given choices directly. {image_placeholder}"
-        prompt = f"You will be given one question concerning several images. The first image is the input image, others are retrieved examples to help you. Answer with the option's letter and explain reason for your answer from the given choices directly. {image_placeholder}"
+        prompt = f"You will be given one question concerning several images. The first image is the input image, others are retrieved examples to help you. Answer reason with the option's letter for your answer from the given choices directly. {image_placeholder}"
         image_files = [image]
         for i in range(number_images):
             image_files.append(gt_images[i])
