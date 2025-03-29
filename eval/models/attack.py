@@ -80,9 +80,11 @@ sim_model = SentenceTransformer('all-MiniLM-L6-v2')
 def FreeText_benchmark(args, image_tensors, input_ids, image_sizes, 
                        gt_answer, pertubation_list, model):
     
-    adv_img_tensors = [image_tensors[i] + pertubation_list[i] for i in range(len(image_tensors))]
+    adv_img_tensors = image_tensors + pertubation_list
     adv_pil_images = model.decode_image_tensors(adv_img_tensors)
     output = model.inference(input_ids, adv_img_tensors, image_sizes)[0]
+    
+    print("diff: ", (adv_img_tensors - image_tensors.mean()))
     
     emb1 = sim_model.encode(output, convert_to_tensor=True)
     emb2 = sim_model.encode(gt_answer, convert_to_tensor=True)
@@ -115,8 +117,7 @@ def ES_1_1(args, benchmark, id, model,
     for i in tqdm(range(1, args.max_query)):
 
         
-        alpha = torch.randn_like(image_tensor_torch).cuda()
-        alpha = torch.clamp(alpha, -epsilon, epsilon)
+        alpha = torch.randn_like(image_tensor_torch).cuda() * epsilon
         new_pertubation_list = pertubation_list + alpha
 
         new_fitness, adv_img_files, output = benchmark(args, image_tensor_torch, input_ids, image_sizes, 
