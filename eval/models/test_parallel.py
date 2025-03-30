@@ -38,7 +38,7 @@ if __name__ == '__main__':
 
     model = LLava("llava-onevision-qwen2-7b-ov", "llava-onevision-qwen2-7b-ov")
     device = "cuda:" + os.environ.get('CUDA_VISIBLE_DEVICES', '')
-
+    print("Device: ", device)
     question = "Which city is the capital of France?<image><image><image>"
     num_batch = 10
     image_files = [Image.open("clean_0.png").convert("RGB") for _ in range(3)]
