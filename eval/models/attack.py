@@ -137,9 +137,12 @@ def ES_1_1(args, benchmark, id, model,
 def main(args):
     model, image_token, special_token = init_model(args)
     acc = 0
-    run = 0
-    
+    run = 100
+    total_evaluation = 0
     for i, item in enumerate(multi_QA_loader(image_placeholder=image_token)):
+        if i == run:
+            break
+        
         id = item['id']
         qs = item['question']
         img_files = item['image_files'] # list of pil_image
@@ -155,18 +158,19 @@ def main(args):
         print("Question: ", qs)
         print("Original output: ", original_output)
         print("Ground truth answer: ", gt_answer)
-        break
+
         num_evaluation, pertubation_list, best_img_files_adv, success =ES_1_1(args, FreeText_benchmark, id, model, 
                                                                               image_tensors, image_sizes, input_ids, gt_answer, 
                                                                               epsilon=args.epsilon, c_increase=1.2, c_decrease=0.8, sigma=1.5)
         print("success: ", success)
         if success == True:
             for j, img in enumerate(best_img_files_adv):
-                img.save(f"adv_{j}.png")
-        # print("Adv output: ", model.inference(qs, best_img_files_adv)[0])
+                img.save(f"adv_{i}_{j}.png")
+                acc += 1
+                total_evaluation += num_evaluation
         
         # break
-    # print(f"Accuracy run={run} max_query={args.max_query} num_retreival={args.num_retrieval}: {acc/run}")
+    print(f"Accuracy max_query={args.max_query}:{acc/run} total_evaluation: {total_evaluation}")
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--num_retrieval", type=int, default=1)
