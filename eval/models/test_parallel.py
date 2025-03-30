@@ -21,8 +21,8 @@ def run_parallel_inference(model, image_tensors, image_sizes, num_processes=3):
     lock = manager.Lock()
 
     process_images = []
-    for rank, (image_tensor, image_size) in enumerate(zip(image_tensors, image_sizes)):
-        p = mp.Process(target=inference_worker, args=(rank, model, input_ids, image_tensor, image_size, results, lock))
+    for rank, image_tensor in enumerate(image_tensors):
+        p = mp.Process(target=inference_worker, args=(rank, model, input_ids, image_tensor, image_sizes, results, lock))
         p.start()
         process_images.append(p)
     
@@ -42,7 +42,7 @@ print("Image shape:", image_tensors.shape)
 start = time()
 result = []
 print(len(result))
-for image_tensor, image_size in zip(image_tensors, image_sizes):
+for image_tensor in image_tensors:
     outputs = model.inference(input_ids, image_tensor, image_sizes)
     result.append(outputs)
 print(len(result))
