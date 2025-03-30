@@ -45,7 +45,7 @@ class LLava:
         image_tensors = process_images(img_files, self.image_processor, self.model.config)
         image_tensors = torch.stack([_image.to(dtype=torch.float16, device=self.device) for _image in image_tensors])
         
-        image_tensors = torch.stack([image_tensors, image_tensors])
+        image_tensors = torch.stack(image_tensors)
         image_sizes = [image.size for image in img_files]
         return input_ids, image_tensors, image_sizes
     
