@@ -37,7 +37,7 @@ conv.append_message(conv.roles[0], question)
 conv.append_message(conv.roles[1], None)
 prompt_question = conv.get_prompt()
 input_ids = tokenizer_image_token(prompt_question, model.tokenizer, IMAGE_TOKEN_INDEX, return_tensors="pt").unsqueeze(0).to(model.device)
-image_tensors = torch.random.rand(5, 3, 3, 224, 224)
+image_tensors = torch.rand(5, 3, 3, 224, 224)
 image_sizes = [(224, 224) * 3] * 5
 
 # normal infererence
