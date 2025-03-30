@@ -14,10 +14,9 @@ class LLava:
         # llava-onevision-qwen2-7b-ov
         self.pretrained = f"lmms-lab/{pretrained}"
         self.model_name = model_name
-        # self.device = "cuda"
-        print(os.environ.get('CUDA_VISIBLE_DEVICES', ''))
-        input()
-        self.device = f"cuda:{os.environ.get('CUDA_VISIBLE_DEVICES', '')}"
+        self.device = "cuda"
+        # print(os.environ.get('CUDA_VISIBLE_DEVICES', ''))
+        # self.device = f"cuda:{os.environ.get('CUDA_VISIBLE_DEVICES', '')}"
         self.device_map = "auto"
         self.llava_model_args = {
             "multimodal": True,

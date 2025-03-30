@@ -7,9 +7,10 @@ from llava.mm_utils import get_model_name_from_path, process_images, tokenizer_i
 from llava.constants import IMAGE_TOKEN_INDEX, DEFAULT_IMAGE_TOKEN, DEFAULT_IM_START_TOKEN, DEFAULT_IM_END_TOKEN, IGNORE_INDEX
 import torch.multiprocessing as mp
 from PIL import Image
+import os
 
 def inference_worker(rank, model, input_ids, image_tensor, image_size, results, lock):
-    torch.cuda.set_device(model.device)
+    torch.cuda.set_device(f"cuda: {os.environ.get('CUDA_VISIBLE_DEVICES', '')}")
     outputs = model.inference(input_ids, image_tensor, image_size)
     with lock:
         results.put(outputs)
