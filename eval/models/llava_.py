@@ -41,7 +41,7 @@ class LLava:
         conv.append_message(conv.roles[0], qs)
         conv.append_message(conv.roles[1], None)
         prompt_question = conv.get_prompt()
-        input_ids = tokenizer_image_token(prompt_question, self.tokenizer, IMAGE_TOKEN_INDEX, return_tensors="pt").unsqueeze(0).to(self.device)
+        input_ids = tokenizer_image_token(prompt_question, self.tokenizer, IMAGE_TOKEN_INDEX, return_tensors="pt").unsqueeze(0)
         image_tensors = process_images(img_files, self.image_processor, self.model.config)
         image_tensors = torch.stack([_image.to(dtype=torch.float16, device=self.device) for _image in image_tensors])
         image_sizes = [image.size for image in img_files]
@@ -65,3 +65,4 @@ class LLava:
             text_outputs = self.tokenizer.batch_decode(cont, skip_special_tokens=True)
             outputs = text_outputs
             return outputs
+        
