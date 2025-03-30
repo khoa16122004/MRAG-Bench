@@ -50,6 +50,8 @@ for image_tensor, image_size in zip(image_tensors, image_sizes):
 print(len(result))
 print("Time inference each sample: ", time() - start)
 
+input("Wait")
+
 # parallel infererence
 start = time()
 result =run_parallel_inference(model, image_tensors, image_sizes, num_processes=3)
