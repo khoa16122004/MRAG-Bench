@@ -6,6 +6,7 @@ from llava.conversation import conv_templates, SeparatorStyle
 from llava.mm_utils import get_model_name_from_path, process_images, tokenizer_image_token
 from llava.constants import IMAGE_TOKEN_INDEX, DEFAULT_IMAGE_TOKEN, DEFAULT_IM_START_TOKEN, DEFAULT_IM_END_TOKEN, IGNORE_INDEX
 import torch.multiprocessing as mp
+from PIL import Image
 
 def inference_worker(rank, model, input_ids, image_tensor, image_size, results, lock):
     torch.cuda.set_device(model.device)
@@ -32,13 +33,10 @@ def run_parallel_inference(model, image_tensors, image_sizes, num_processes=3):
 model = LLava("llava-onevision-qwen2-7b-ov", "llava-onevision-qwen2-7b-ov")
 
 question = "Which city is the capital of France?<image><image><image>"
-conv = copy.deepcopy(conv_templates["qwen_1_5"])
-conv.append_message(conv.roles[0], question)
-conv.append_message(conv.roles[1], None)
-prompt_question = conv.get_prompt()
-input_ids = tokenizer_image_token(prompt_question, model.tokenizer, IMAGE_TOKEN_INDEX, return_tensors="pt").unsqueeze(0).to(model.device)
-image_tensors = torch.rand(5, 3, 3, 224, 224)
-image_sizes = [(224, 224) * 3] * 5
+image_files = [Image.open("clean_0.png").convert("RGB") for _ in range(3)]
+input_ids, image_tensors, image_sizes = model.repair_input(question, image_files)
+image_tensors = image_tensors.repeat(3, 1, 1, 1) # 3 x (3 x 3 x W  x H)
+print("Image shape:", image_tensors.shape)
 
 # normal infererence
 start = time()
