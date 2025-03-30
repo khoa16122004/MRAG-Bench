@@ -29,7 +29,7 @@ def run_parallel_inference(model, image_tensors, image_sizes, num_processes=3):
         p.join()
 
     return list(results)
-model = LLava("llava-onevision-qwen2-7b-ov", "llava-onevision-qwen2-7b-ov").cuda()
+model = LLava("llava-onevision-qwen2-7b-ov", "llava-onevision-qwen2-7b-ov")
 
 question = "Which city is the capital of France?<image><image><image>"
 conv = copy.deepcopy(conv_templates["qwen_1_5"])
