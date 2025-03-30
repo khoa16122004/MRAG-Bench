@@ -10,7 +10,7 @@ from PIL import Image
 import os
 
 def inference_worker(rank, model, input_ids, image_tensor, image_size, results, lock, device):
-    torch.cuda.set_device(device)
+    # torch.cuda.set_device(device)
 
     outputs = model.inference(input_ids, image_tensor, image_size)
     with lock:
