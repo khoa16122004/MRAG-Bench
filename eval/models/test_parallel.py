@@ -10,7 +10,10 @@ from PIL import Image
 import os
 
 def inference_worker(rank, model, input_ids, image_tensor, image_size, results, lock):
-    torch.cuda.set_device("cuda:" + os.environ.get('CUDA_VISIBLE_DEVICES', ''))
+    device = "cuda:" + os.environ.get('CUDA_VISIBLE_DEVICES', '')
+    torch.cuda.set_device(device)
+    print(f"Setting CUDA device: {device}")
+
     outputs = model.inference(input_ids, image_tensor, image_size)
     with lock:
         results.put(outputs)
