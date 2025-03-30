@@ -9,16 +9,14 @@ import torch.multiprocessing as mp
 from PIL import Image
 import os
 
-def inference_worker(rank, model, input_ids, image_tensor, image_size, results, lock):
-    device = "cuda:" + os.environ.get('CUDA_VISIBLE_DEVICES', '')
+def inference_worker(rank, model, input_ids, image_tensor, image_size, results, lock, device):
     torch.cuda.set_device(device)
-    print(f"Setting CUDA device: {device}")
 
     outputs = model.inference(input_ids, image_tensor, image_size)
     with lock:
         results.put(outputs)
 
-def run_parallel_inference(model, image_tensors, image_sizes, num_processes=3):
+def run_parallel_inference(model, image_tensors, image_sizes, device):
     mp.set_start_method("spawn", force=True)
     manager = mp.Manager()
     results = manager.list()
@@ -26,7 +24,7 @@ def run_parallel_inference(model, image_tensors, image_sizes, num_processes=3):
 
     process_images = []
     for rank, image_tensor in enumerate(image_tensors):
-        p = mp.Process(target=inference_worker, args=(rank, model, input_ids, image_tensor, image_sizes, results, lock))
+        p = mp.Process(target=inference_worker, args=(rank, model, input_ids, image_tensor, image_sizes, results, lock, device))
         p.start()
         process_images.append(p)
     
@@ -39,6 +37,7 @@ def run_parallel_inference(model, image_tensors, image_sizes, num_processes=3):
 if __name__ == '__main__':
 
     model = LLava("llava-onevision-qwen2-7b-ov", "llava-onevision-qwen2-7b-ov")
+    device = "cuda:" + os.environ.get('CUDA_VISIBLE_DEVICES', '')
 
     question = "Which city is the capital of France?<image><image><image>"
     num_batch = 3
@@ -61,7 +60,7 @@ if __name__ == '__main__':
 
     # parallel infererence
     start = time()
-    result =run_parallel_inference(model, image_tensors, image_sizes, num_processes=3)
+    result =run_parallel_inference(model, image_tensors, image_sizes, device)
     print(len(result))
     print("Time inference multiple samples: ", time() - start)
 
