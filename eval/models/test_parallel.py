@@ -30,31 +30,35 @@ def run_parallel_inference(model, image_tensors, image_sizes, num_processes=3):
         p.join()
 
     return list(results)
-model = LLava("llava-onevision-qwen2-7b-ov", "llava-onevision-qwen2-7b-ov")
 
-question = "Which city is the capital of France?<image><image><image>"
-image_files = [Image.open("clean_0.png").convert("RGB") for _ in range(3)]
-input_ids, image_tensors, image_sizes = model.repair_input(question, image_files)
-image_tensors = torch.stack([image_tensors for _ in range(3)])
-print("Image shape:", image_tensors.shape)
 
-# normal infererence
-start = time()
-result = []
-print(len(result))
-for image_tensor in image_tensors:
-    outputs = model.inference(input_ids, image_tensor, image_sizes)
-    result.append(outputs)
-print(len(result))
-print("Time inference each sample: ", time() - start)
+if __name__ == '__main__':
 
-input("Wait")
+    model = LLava("llava-onevision-qwen2-7b-ov", "llava-onevision-qwen2-7b-ov")
 
-# parallel infererence
-start = time()
-result =run_parallel_inference(model, image_tensors, image_sizes, num_processes=3)
-print(len(result))
-print("Time inference multiple samples: ", time() - start)
+    question = "Which city is the capital of France?<image><image><image>"
+    image_files = [Image.open("clean_0.png").convert("RGB") for _ in range(3)]
+    input_ids, image_tensors, image_sizes = model.repair_input(question, image_files)
+    image_tensors = torch.stack([image_tensors for _ in range(3)])
+    print("Image shape:", image_tensors.shape)
+
+    # normal infererence
+    start = time()
+    result = []
+    print(len(result))
+    for image_tensor in image_tensors:
+        outputs = model.inference(input_ids, image_tensor, image_sizes)
+        result.append(outputs)
+    print(len(result))
+    print("Time inference each sample: ", time() - start)
+
+    input("Wait")
+
+    # parallel infererence
+    start = time()
+    result =run_parallel_inference(model, image_tensors, image_sizes, num_processes=3)
+    print(len(result))
+    print("Time inference multiple samples: ", time() - start)
 
 
 
