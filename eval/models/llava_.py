@@ -6,6 +6,7 @@ import torchvision.transforms as transforms
 import copy
 import torch
 import warnings
+import os
 class LLava:
     def __init__(self, pretrained, model_name):
         
@@ -13,7 +14,8 @@ class LLava:
         # llava-onevision-qwen2-7b-ov
         self.pretrained = f"lmms-lab/{pretrained}"
         self.model_name = model_name
-        self.device = "cuda"
+        # self.device = "cuda"
+        self.device = os.evirion.get("CUDA_VISIBLE_DEVICES", "")
         self.device_map = "auto"
         self.llava_model_args = {
             "multimodal": True,
