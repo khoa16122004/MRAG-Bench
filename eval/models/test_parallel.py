@@ -14,7 +14,7 @@ def inference_worker(rank, model, input_ids, image_tensor, image_size, results, 
 
     outputs = model.inference(input_ids, image_tensor, image_size)
     with lock:
-        results.put(outputs)
+        results.append(outputs)
 
 def run_parallel_inference(model, image_tensors, image_sizes, device):
     mp.set_start_method("spawn", force=True)
