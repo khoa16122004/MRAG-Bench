@@ -35,8 +35,7 @@ model = LLava("llava-onevision-qwen2-7b-ov", "llava-onevision-qwen2-7b-ov")
 question = "Which city is the capital of France?<image><image><image>"
 image_files = [Image.open("clean_0.png").convert("RGB") for _ in range(3)]
 input_ids, image_tensors, image_sizes = model.repair_input(question, image_files)
-print(image_tensors.shape)
-image_tensors = image_tensors.repeat_interleave(3, dim=0)
+image_tensors = torch.stack([image_tensors for _ in range(3)])
 print("Image shape:", image_tensors.shape)
 
 # normal infererence
