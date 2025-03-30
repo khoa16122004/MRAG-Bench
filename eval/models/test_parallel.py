@@ -16,7 +16,7 @@ def inference_worker(rank, model, input_ids, image_tensor, image_size, results, 
     with lock:
         results.append(outputs)
 
-def run_parallel_inference(model, image_tensors, image_sizes, device):
+def run_parallel_inference(model, image_tensors, image_sizes, input_ids, device):
     mp.set_start_method("spawn", force=True)
     manager = mp.Manager()
     results = manager.list()
@@ -59,10 +59,19 @@ if __name__ == '__main__':
     input("Wait")
 
     # parallel infererence
+    # start = time()
+    # result =run_parallel_inference(model, image_tensors, image_sizes, input_ids, device)
+    # print("Time inference multiple samples: ", time() - start)
+    streams = [torch.cuda.Stream(device) for _ in range(num_batch)]
+    results = [None] * num_batch
     start = time()
-    result =run_parallel_inference(model, image_tensors, image_sizes, device)
-    print(len(result))
+    for i, (image_tensor, stream) in enumerate(zip(image_tensors, streams)):
+        with torch.cuda.stream(stream):
+            results[i] = model.inference(input_ids, image_tensor.to(device), image_sizes)
     print("Time inference multiple samples: ", time() - start)
+
+    torch.cuda.synchronize()
+    print(len(result))
 
 
 
