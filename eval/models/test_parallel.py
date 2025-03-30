@@ -69,9 +69,10 @@ if __name__ == '__main__':
         with torch.cuda.stream(stream):
             results[i] = model.inference(input_ids, image_tensor, image_sizes)
     print("Time inference multiple samples: ", time() - start)
-
     torch.cuda.synchronize()
     print(len(result))
+    input("Wait")
+
 
 
 
