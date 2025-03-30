@@ -43,8 +43,10 @@ class LLava:
         prompt_question = conv.get_prompt()
         input_ids = tokenizer_image_token(prompt_question, self.tokenizer, IMAGE_TOKEN_INDEX, return_tensors="pt").unsqueeze(0).to(self.device)
         image_tensors = process_images(img_files, self.image_processor, self.model.config)
-        image_tensors = [_image.to(dtype=torch.float16, device=self.device) for _image in image_tensors]
-        image_sizes = [image.size for image in img_files]
+        image_tensors = torch.stack([_image.to(dtype=torch.float16, device=self.device) for _image in image_tensors])
+        
+        image_tensors = torch.stack([image_tensors, image_tensors])
+        image_sizes = [[image.size for image in img_files], [image.size for image in img_files]]
         return input_ids, image_tensors, image_sizes
     
     def inference(self, input_ids, image_tensors, image_sizes):

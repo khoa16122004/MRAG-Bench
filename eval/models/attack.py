@@ -111,9 +111,6 @@ def ES_1_1(args, benchmark, id, model,
     success = False
     num_evaluation = 1
 
-    # adv_history_0 = [adv_img_files[0]]
-    # adv_history_1 = [adv_img_files[1]]
-
     for i in tqdm(range(1, args.max_query)):
         alpha = torch.randn_like(image_tensor_torch).cuda()
         new_pertubation_list =  torch.clamp(pertubation_list + alpha, -epsilon, epsilon)
@@ -152,12 +149,14 @@ def main(args):
         for j, img in enumerate(img_files):
             img.save(f"clean_{j}.png")
         input_ids, image_tensors, image_sizes = model.repair_input(qs, img_files)
-
+        print("Image tensors shape: ", image_tensors.shape)
+        print("Image size: ", image_sizes)
+        
         original_output = model.inference(input_ids, image_tensors, image_sizes)[0]
         print("Question: ", qs)
         print("Original output: ", original_output)
         print("Ground truth answer: ", gt_answer)
-        
+        break
         num_evaluation, pertubation_list, best_img_files_adv, success =ES_1_1(args, FreeText_benchmark, id, model, 
                                                                               image_tensors, image_sizes, input_ids, gt_answer, 
                                                                               epsilon=args.epsilon, c_increase=1.2, c_decrease=0.8, sigma=1.5)
