@@ -40,7 +40,7 @@ if __name__ == '__main__':
     device = "cuda:" + os.environ.get('CUDA_VISIBLE_DEVICES', '')
     print("Device: ", device)
     question = "Which city is the capital of France?<image><image><image>"
-    num_batch = 20
+    num_batch = 50
     image_files = [Image.open("clean_0.png").convert("RGB") for _ in range(3)]
     input_ids, image_tensors, image_sizes = model.repair_input(question, image_files)
     image_tensors = torch.stack([image_tensors for _ in range(num_batch)])
