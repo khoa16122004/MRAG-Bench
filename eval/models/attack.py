@@ -91,20 +91,19 @@ def FreeText_benchmark(args, image_tensors, input_ids, image_sizes,
 
     similarity = F.cosine_similarity(emb1.unsqueeze(0), emb2.unsqueeze(0)).item()
 
-    return 0.2 - similarity, adv_pil_images, output
+    return 1 - similarity, adv_pil_images, output
     
 def save_gif(images, filename, duration=0.2):
     imageio.mimsave(filename, images, duration=duration)
     
 def ES_1_1(args, benchmark, id, model, 
            image_tensors, image_sizes, input_ids, gt_answer, 
-           epsilon=0.05, c_increase=1.2, c_decrease=0.8, sigma=1.5):
+           epsilon=0.05, sigma=1.5):
 
-    image_tensor_torch = torch.stack(image_tensors).cuda()
-    pertubation_list = torch.randn_like(image_tensor_torch).cuda()
+    pertubation_list = torch.randn_like(image_tensors).cuda()
     pertubation_list = torch.clamp(pertubation_list, -epsilon, epsilon)
 
-    best_fitness, adv_img_files, output = benchmark(args, image_tensor_torch, input_ids, image_sizes, 
+    best_fitness, adv_img_files, output = benchmark(args, image_tensors, input_ids, image_sizes, 
                                                     gt_answer, pertubation_list, model)
     best_img_files_adv = adv_img_files
     history = [best_fitness]
@@ -112,10 +111,10 @@ def ES_1_1(args, benchmark, id, model,
     num_evaluation = 1
 
     for i in tqdm(range(1, args.max_query)):
-        alpha = torch.randn_like(image_tensor_torch).cuda()
+        alpha = torch.randn_like(image_tensors).cuda()
         new_pertubation_list =  torch.clamp(pertubation_list + alpha, -epsilon, epsilon)
 
-        new_fitness, adv_img_files, output = benchmark(args, image_tensor_torch, input_ids, image_sizes, 
+        new_fitness, adv_img_files, output = benchmark(args, image_tensors, input_ids, image_sizes, 
                                                        gt_answer, new_pertubation_list, model)
         print("current output: ", output)
 

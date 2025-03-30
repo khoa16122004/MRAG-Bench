@@ -46,7 +46,7 @@ class LLava:
         image_tensors = torch.stack([_image.to(dtype=torch.float16, device=self.device) for _image in image_tensors])
         
         image_tensors = torch.stack([image_tensors, image_tensors])
-        image_sizes = [[image.size for image in img_files], [image.size for image in img_files]]
+        image_sizes = [image.size for image in img_files]
         return input_ids, image_tensors, image_sizes
     
     def inference(self, input_ids, image_tensors, image_sizes):

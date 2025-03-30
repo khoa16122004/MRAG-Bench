@@ -17,7 +17,7 @@ from PIL import Image
 import math
 
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
-from utils.dataloader import bench_data_loader 
+from eval.models.dataloader import bench_data_loader 
 
 def main(args):
     
