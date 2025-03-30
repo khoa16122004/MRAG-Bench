@@ -91,7 +91,7 @@ def FreeText_benchmark(args, image_tensors, input_ids, image_sizes,
 
     similarity = F.cosine_similarity(emb1.unsqueeze(0), emb2.unsqueeze(0)).item()
 
-    return 1 - similarity, adv_pil_images, output
+    return 0.1 - similarity, adv_pil_images, output
     
 def save_gif(images, filename, duration=0.2):
     imageio.mimsave(filename, images, duration=duration)
