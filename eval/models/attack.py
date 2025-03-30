@@ -161,7 +161,7 @@ def main(args):
 
         num_evaluation, pertubation_list, best_img_files_adv, success =ES_1_1(args, FreeText_benchmark, id, model, 
                                                                               image_tensors, image_sizes, input_ids, gt_answer, 
-                                                                              epsilon=args.epsilon, c_increase=1.2, c_decrease=0.8, sigma=1.5)
+                                                                              epsilon=args.epsilon, sigma=1.5)
         print("success: ", success)
         if success == True:
             for j, img in enumerate(best_img_files_adv):
