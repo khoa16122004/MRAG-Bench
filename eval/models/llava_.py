@@ -50,6 +50,7 @@ class LLava:
         image_sizes = [image.size for image in img_files]
         return input_ids, image_tensors, image_sizes
     
+    @torch.no_grad()
     def inference(self, input_ids, image_tensors, image_sizes):
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
