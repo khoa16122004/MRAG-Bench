@@ -82,9 +82,10 @@ def FreeText_benchmark(args, image_tensors, index_attack, input_ids, image_sizes
     
     # BLEU score
     bleu = sentence_bleu([gt_answer.split()], output.split())
+    s2 = 0.5 - bleu
     
     # weighted sum
-    final_score = 0.5 * s1 + 0.5 * bleu
+    final_score = 0.5 * s1 + 0.5 * s2
     return final_score, adv_pil_images, output
         
     
