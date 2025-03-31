@@ -179,7 +179,7 @@ def main(args):
         print("Original output: ", original_output)
         print("Ground truth answer: ", gt_answer)
 
-        for index_attack in range(len(image_tensors.shape[0])):
+        for index_attack in range(image_tensors.shape[0]):
             # repair dir
             index_dir = os.path.join(sample_dir, str(index_attack))
             os.makedirs(index_dir, exist_ok=True)
