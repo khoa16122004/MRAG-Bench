@@ -180,7 +180,6 @@ def main(args):
         print("Ground truth answer: ", gt_answer)
 
         for index_attack in range(num_image):
-            print()
             # repair dir
             index_dir = os.path.join(sample_dir, str(index_attack))
             os.makedirs(index_dir, exist_ok=True)
