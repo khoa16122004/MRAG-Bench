@@ -203,7 +203,7 @@ def main(args):
                 f.write(f"Ground truth answer: {gt_answer}\n\n")
                 f.write(f"Original output: {original_output}\n\n")
                 f.write(f"Attacked output: {output}\n\n")
-                f.write(f"Fitness: ", {history[-1]})
+                f.write(f"Fitness:  {history[-1]}",)
                 f.write(f"Num evaluation: {num_evaluation}\n\n")
                         
         
