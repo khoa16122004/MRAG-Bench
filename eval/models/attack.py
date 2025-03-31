@@ -181,7 +181,7 @@ def main(args):
                 acc += 1
                 total_evaluation += num_evaluation
         
-    print(f"Accuracy max_query={args.max_query}:{acc/run} total_evaluation: {total_evaluation}")
+    print(f"Accuracy max_query={args.max_query}:{acc/args.run} total_evaluation: {total_evaluation}")
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--pretrained", type=str, default="llava-onevision-qwen2-7b-ov")
@@ -189,7 +189,7 @@ if __name__ == "__main__":
     parser.add_argument("--max_query", type=int, default=1000)
     parser.add_argument("--epsilon", type=float, default=0.1)
     parser.add_argument("--run", type=int, default=10)
-    parser.add_argument("--lambda", type=int, default=50)
+    parser.add_argument("--lambda_", type=int, default=50)
     args = parser.parse_args()
 
     main(args)
