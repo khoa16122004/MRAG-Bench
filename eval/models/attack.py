@@ -84,7 +84,7 @@ def FreeText_benchmark(args, image_tensors, input_ids, image_sizes,
     adv_pil_images = model.decode_image_tensors(adv_img_tensors)
     output = model.inference(input_ids, adv_img_tensors, image_sizes)[0]
     
-    print("diff: ", (adv_img_tensors - image_tensors).mean())
+    # print("diff: ", (adv_img_tensors - image_tensors).mean())
     
     emb1 = sim_model.encode(output, convert_to_tensor=True)
     emb2 = sim_model.encode(gt_answer, convert_to_tensor=True)
@@ -187,7 +187,7 @@ if __name__ == "__main__":
     parser.add_argument("--pretrained", type=str, default="llava-onevision-qwen2-7b-ov")
     parser.add_argument("--model_name", type=str, default="llava_qwen")
     parser.add_argument("--max_query", type=int, default=1000)
-    parser.add_argument("--epsilon", type=float, default=0.1)
+    parser.add_argument("--epsilon", type=float, default=0.05)
     parser.add_argument("--run", type=int, default=10)
     parser.add_argument("--lambda_", type=int, default=50)
     args = parser.parse_args()
