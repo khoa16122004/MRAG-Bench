@@ -35,6 +35,7 @@ class LLava:
         )
 
         to_pil = transforms.ToPILImage()
+        print(image_tensors.shape)
         pil_images = [to_pil(unnormalize(img.cpu())) for img in image_tensors]
 
         return pil_images
