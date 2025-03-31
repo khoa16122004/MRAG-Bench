@@ -70,7 +70,7 @@ sim_model = SentenceTransformer('all-MiniLM-L6-v2')
 def FreeText_benchmark(args, image_tensors, index_attack, input_ids, image_sizes, 
                        gt_answer, pertubation_list, model):
     
-    adv_img_tensors = image_tensors.copy()
+    adv_img_tensors = image_tensors.clone()
     adv_img_tensors[index_attack] = image_tensors[index_attack] + pertubation_list
     adv_pil_images = model.decode_image_tensors(adv_img_tensors)
     output = model.inference(input_ids, adv_img_tensors, image_sizes)[0]    
