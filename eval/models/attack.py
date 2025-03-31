@@ -116,6 +116,7 @@ def ES_1_lambda(args, benchmark, id, model, lambda_,
         alpha = torch.randn(lambda_, *image_tensors.shape).cuda()
         pertubations_list = alpha + best_pertubations * sigma
         pertubations_list = torch.clamp(pertubations_list, -epsilon, epsilon)   
+        print(pertubations_list.shape)
         
         current_fitnesses = []
         current_adv_files = []
