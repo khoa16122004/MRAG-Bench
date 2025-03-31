@@ -178,7 +178,7 @@ def main(args):
         print("Ground truth answer: ", gt_answer)
 
         num_evaluation, pertubation_list, best_img_files_adv, success =ES_1_lambda(args, FreeText_benchmark, id, model, args.lambda_,
-                                                                                   image_tensors, image_sizes, input_ids, gt_answer, 
+                                                                                   image_tensors, image_sizes, input_ids, original_output, 
                                                                                    epsilon=args.epsilon, sigma=1.5)
         print("success: ", success)
         if success == True:
