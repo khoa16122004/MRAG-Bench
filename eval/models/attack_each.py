@@ -71,7 +71,6 @@ def FreeText_benchmark(args, image_tensors, index_attack, input_ids, image_sizes
     
     adv_img_tensors = image_tensors.detach().clone().cuda()
     adv_img_tensors[index_attack] = image_tensors[index_attack] + pertubation_list
-    print("Adv shape: ", adv_img_tensors.shape)
     adv_pil_images = model.decode_image_tensors(adv_img_tensors)
     output = model.inference(input_ids, adv_img_tensors, image_sizes)[0]    
     
@@ -94,12 +93,10 @@ def ES_1_lambda(args, benchmark, index_attack, model, lambda_,
                 epsilon=0.05, sigma=1.5, c_increase=1.1, c_decrease=0.9):
     
     # image_tensors: batch_size x 3 x 224 x 224
-    print(image_tensors.shape)
-    print(image_tensors[0])
     best_pertubations = torch.randn_like(image_tensors[index_attack]).cuda()
     best_pertubations = torch.clamp(best_pertubations, -epsilon, epsilon)
 
-    best_fitness, adv_img_files, output = benchmark(args, image_tensors, input_ids, index_attack, image_sizes, 
+    best_fitness, adv_img_files, output = benchmark(args, image_tensors, index_attack, input_ids, image_sizes, 
                                                     gt_answer, best_pertubations, model)
     best_img_files_adv = adv_img_files
     history = [best_fitness]
