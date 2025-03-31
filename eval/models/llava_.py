@@ -35,6 +35,7 @@ class LLava:
         )
 
         to_pil = transforms.ToPILImage()
+        print(image_tensors[0].shape)
         to_pil(unnormalize(image_tensors[0]))
         # pil_images = [to_pil(unnormalize(img.cpu())) for img in image_tensors]
         input("Wait")
