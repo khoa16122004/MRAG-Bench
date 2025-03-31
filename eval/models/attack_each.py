@@ -167,6 +167,7 @@ def main(args):
         gt_answer = item['answer']
         
         input_ids, image_tensors, image_sizes = model.repair_input(qs, img_files)
+        
         # repair dir
         clean_dir = os.path.join(sample_dir, "clean_img")
         os.makedirs(clean_dir, exist_ok=True)

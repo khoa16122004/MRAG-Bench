@@ -89,4 +89,5 @@ def multi_QA_loader(image_placeholder):
                     "image_files": img_files,
                     "answer": answer
                 }
+                break
                 
