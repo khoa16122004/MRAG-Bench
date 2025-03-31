@@ -145,7 +145,7 @@ def ES_1_lambda(args, benchmark, index_attack, model, lambda_,
 def main(args):
     
     # repair dir
-    experiment_dir = f"ES_lambda={args.lambda_}_epsilon={args.epsilon}_maxiter={args.max_query}"
+    experiment_dir = f"ES_lambda={args.lambda_}_epsilon={args.epsilon}_maxiter={args.max_query}_pretrained={args.pretrained}"
     os.makedirs(experiment_dir, exist_ok=True)
     
     # initiallize model
