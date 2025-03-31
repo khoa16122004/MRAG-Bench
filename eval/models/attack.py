@@ -184,7 +184,6 @@ def main(args):
     print(f"Accuracy max_query={args.max_query}:{acc/run} total_evaluation: {total_evaluation}")
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--num_retrieval", type=int, default=1)
     parser.add_argument("--pretrained", type=str, default="llava-onevision-qwen2-7b-ov")
     parser.add_argument("--model_name", type=str, default="llava_qwen")
     parser.add_argument("--max_query", type=int, default=1000)
