@@ -83,10 +83,7 @@ def FreeText_benchmark(args, image_tensors, input_ids, image_sizes,
     
     adv_img_tensors = image_tensors + pertubation_list
     adv_pil_images = model.decode_image_tensors(adv_img_tensors)
-    output = model.inference(input_ids, adv_img_tensors, image_sizes)[0]
-    
-    # print("diff: ", (adv_img_tensors - image_tensors).mean())
-    
+    output = model.inference(input_ids, adv_img_tensors, image_sizes)[0]    
     
     # cosine similarity
     emb1 = sim_model.encode(output, convert_to_tensor=True)
@@ -104,11 +101,9 @@ def FreeText_benchmark(args, image_tensors, input_ids, image_sizes,
 def save_gif(images, filename, duration=0.2):
     imageio.mimsave(filename, images, duration=duration)
     
-
-
 def ES_1_lambda(args, benchmark, id, model, lambda_,
            image_tensors, image_sizes, input_ids, gt_answer, 
-           epsilon=0.05, sigma=1.5):
+           epsilon=0.05, sigma=1.5, c_increase=1.1, c_decrease=0.9):
     
     best_pertubations = torch.randn_like(image_tensors).cuda()
     best_pertubations = torch.clamp(best_pertubations, -epsilon, epsilon)
@@ -129,9 +124,9 @@ def ES_1_lambda(args, benchmark, id, model, lambda_,
         current_adv_files = []
         current_output = []
         for pertubations in pertubations_list:
-            best_fitness, adv_img_files, output = benchmark(args, image_tensors, input_ids, image_sizes, 
+            fitness, adv_img_files, output = benchmark(args, image_tensors, input_ids, image_sizes, 
                                                             gt_answer, pertubations, model)    
-            current_fitnesses.append(best_fitness)
+            current_fitnesses.append(fitness)
             current_adv_files.append(adv_img_files)
             current_output.append(output)
         
@@ -145,6 +140,9 @@ def ES_1_lambda(args, benchmark, id, model, lambda_,
             best_pertubations = pertubations_list[best_id_current_fitness]
             best_img_files_adv = current_adv_files[best_id_current_fitness]
             output = current_output[best_id_current_fitness]
+            sigma *= c_increase
+        else:
+            sigma *= c_decrease
             
         history.append(best_fitness)
         
