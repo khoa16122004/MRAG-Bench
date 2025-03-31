@@ -96,51 +96,64 @@ def FreeText_benchmark(args, image_tensors, input_ids, image_sizes,
 def save_gif(images, filename, duration=0.2):
     imageio.mimsave(filename, images, duration=duration)
     
-def ES_1_1(args, benchmark, id, model, 
+
+
+def ES_1_lambda(args, benchmark, id, model, lambda_,
            image_tensors, image_sizes, input_ids, gt_answer, 
            epsilon=0.05, sigma=1.5):
-
-    pertubation_list = torch.randn_like(image_tensors).cuda()
-    pertubation_list = torch.clamp(pertubation_list, -epsilon, epsilon)
+    
+    best_pertubations = torch.randn_like(image_tensors).cuda()
+    best_pertubations = torch.clamp(best_pertubations, -epsilon, epsilon)
 
     best_fitness, adv_img_files, output = benchmark(args, image_tensors, input_ids, image_sizes, 
-                                                    gt_answer, pertubation_list, model)
+                                                    gt_answer, best_pertubations, model)
     best_img_files_adv = adv_img_files
     history = [best_fitness]
     success = False
     num_evaluation = 1
-
-    for i in tqdm(range(1, args.max_query)):
-        alpha = torch.randn_like(image_tensors).cuda()
-        new_pertubation_list =  torch.clamp(pertubation_list + alpha, -epsilon, epsilon)
-
-        new_fitness, adv_img_files, output = benchmark(args, image_tensors, input_ids, image_sizes, 
-                                                       gt_answer, new_pertubation_list, model)
-        print("current output: ", output)
-
-        if new_fitness > best_fitness:
-            best_fitness = new_fitness
-            best_img_files_adv = adv_img_files
-            pertubation_list = new_pertubation_list
-        #     sigma *= c_increase
-        # else:
-        #     sigma *= c_decrease
-
-        print("best fitness: ", best_fitness, "sigma: ", sigma)
+    
+    for i in range(args.max_query):
+        alpha = torch.randn(lambda_, *image_tensors.shape).cuda()
+        pertubations_list = alpha + best_pertubations * sigma
+        pertubations_list = torch.clamp(pertubations_list, -epsilon, epsilon)   
+        
+        current_fitnesses = []
+        current_adv_files = []
+        current_output = []
+        for pertubations in pertubations_list:
+            best_fitness, adv_img_files, output = benchmark(args, image_tensors, input_ids, image_sizes, 
+                                                            gt_answer, pertubations, model)    
+            current_fitnesses.append(best_fitness)
+            adv_img_files.append(adv_img_files)
+            current_output.append(output)
+        
+        num_evaluation += lambda_
+            
+        current_fitnesses = torch.tensor(current_fitnesses)
+        best_id_current_fitness = torch.argmax(current_fitnesses) 
+        
+        if current_fitnesses[best_id_current_fitness] > best_fitness:
+            best_fitness = current_fitnesses[best_id_current_fitness]
+            best_pertubations = pertubations_list[best_id_current_fitness]
+            best_img_files_adv = current_adv_files[best_id_current_fitness]
+            output = current_output[best_id_current_fitness]
+            
         history.append(best_fitness)
-        num_evaluation += 1
-        if best_fitness > 0:
+        
+        print(f"Iteration {i}, best fitness: {best_fitness}, output: {output}\n")
+
+        if best_fitness >= 0:
             success = True
             break
-    return num_evaluation, pertubation_list, best_img_files_adv, success
-    
+        
+    return num_evaluation, history, best_img_files_adv, success
+
 def main(args):
     model, image_token, special_token = init_model(args)
     acc = 0
-    run = 100
     total_evaluation = 0
     for i, item in enumerate(multi_QA_loader(image_placeholder=image_token)):
-        if i == run:
+        if i == args.run:
             break
         
         id = item['id']
@@ -151,7 +164,6 @@ def main(args):
         for j, img in enumerate(img_files):
             img.save(f"clean_{j}.png")
         input_ids, image_tensors, image_sizes = model.repair_input(qs, img_files)
-        print("Image tensors shape: ", image_tensors.shape)
         print("Image size: ", image_sizes)
         
         original_output = model.inference(input_ids, image_tensors, image_sizes)[0]
@@ -159,9 +171,9 @@ def main(args):
         print("Original output: ", original_output)
         print("Ground truth answer: ", gt_answer)
 
-        num_evaluation, pertubation_list, best_img_files_adv, success =ES_1_1(args, FreeText_benchmark, id, model, 
-                                                                              image_tensors, image_sizes, input_ids, gt_answer, 
-                                                                              epsilon=args.epsilon, sigma=1.5)
+        num_evaluation, pertubation_list, best_img_files_adv, success =ES_1_lambda(args, FreeText_benchmark, id, model, args.lambda_,
+                                                                                   image_tensors, image_sizes, input_ids, gt_answer, 
+                                                                                   epsilon=args.epsilon, sigma=1.5)
         print("success: ", success)
         if success == True:
             for j, img in enumerate(best_img_files_adv):
@@ -169,7 +181,6 @@ def main(args):
                 acc += 1
                 total_evaluation += num_evaluation
         
-        # break
     print(f"Accuracy max_query={args.max_query}:{acc/run} total_evaluation: {total_evaluation}")
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -178,6 +189,8 @@ if __name__ == "__main__":
     parser.add_argument("--model_name", type=str, default="llava_qwen")
     parser.add_argument("--max_query", type=int, default=1000)
     parser.add_argument("--epsilon", type=float, default=0.1)
+    parser.add_argument("--run", type=int, default=10)
+    parser.add_argument("--lambda", type=int, default=50)
     args = parser.parse_args()
 
     main(args)
