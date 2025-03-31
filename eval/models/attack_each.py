@@ -94,7 +94,8 @@ def ES_1_lambda(args, benchmark, index_attack, model, lambda_,
                 epsilon=0.05, sigma=1.5, c_increase=1.1, c_decrease=0.9):
     
     # image_tensors: batch_size x 3 x 224 x 224
-    
+    print(image_tensors.shape)
+    print(image_tensors[0])
     best_pertubations = torch.randn_like(image_tensors[index_attack]).cuda()
     best_pertubations = torch.clamp(best_pertubations, -epsilon, epsilon)
 
@@ -190,7 +191,7 @@ def main(args):
             
             num_evaluation, history, best_img_files_adv, success, output =ES_1_lambda(args, FreeText_benchmark, index_attack, model, args.lambda_,
                                                                                       image_tensors, image_sizes, input_ids, original_output, 
-                                                                                      epsilon=args.epsilon, sigma=1.5)
+                                                                                      epsilon=args.epsilon)
             
             # log
             attacked_img_files = best_img_files_adv[index_attack]
