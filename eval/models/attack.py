@@ -16,6 +16,7 @@ from PIL import Image
 import math
 from torchvision import transforms
 from dataloader import multi_QA_loader
+from nltk.translate.bleu_score import sentence_bleu
 import warnings
 warnings.filterwarnings("ignore")
 def seed_everything(seed: int):
@@ -86,12 +87,19 @@ def FreeText_benchmark(args, image_tensors, input_ids, image_sizes,
     
     # print("diff: ", (adv_img_tensors - image_tensors).mean())
     
+    
+    # cosine similarity
     emb1 = sim_model.encode(output, convert_to_tensor=True)
     emb2 = sim_model.encode(gt_answer, convert_to_tensor=True)
-
     similarity = F.cosine_similarity(emb1.unsqueeze(0), emb2.unsqueeze(0)).item()
-
-    return 0.1 - similarity, adv_pil_images, output
+    s1 = 0.5 - similarity
+    
+    # BLEU score
+    bleu = sentence_bleu([gt_answer.split()], output.split())
+    
+    # weighted sum
+    final_score = 0.5 * s1 + 0.5 * bleu
+    return final_score, adv_pil_images, output
     
 def save_gif(images, filename, duration=0.2):
     imageio.mimsave(filename, images, duration=duration)
@@ -112,7 +120,7 @@ def ES_1_lambda(args, benchmark, id, model, lambda_,
     success = False
     num_evaluation = 1
     
-    for i in range(args.max_query):
+    for i in tqdm(range(args.max_query)):
         alpha = torch.randn(lambda_, *image_tensors.shape).to(torch.float16).cuda()
         pertubations_list = alpha + best_pertubations * sigma
         pertubations_list = torch.clamp(pertubations_list, -epsilon, epsilon)
@@ -124,7 +132,7 @@ def ES_1_lambda(args, benchmark, id, model, lambda_,
             best_fitness, adv_img_files, output = benchmark(args, image_tensors, input_ids, image_sizes, 
                                                             gt_answer, pertubations, model)    
             current_fitnesses.append(best_fitness)
-            adv_img_files.append(adv_img_files)
+            current_adv_files.append(adv_img_files)
             current_output.append(output)
         
         num_evaluation += lambda_
