@@ -72,6 +72,7 @@ def FreeText_benchmark(args, image_tensors, index_attack, input_ids, image_sizes
     
     adv_img_tensors = image_tensors.clone()
     adv_img_tensors[index_attack] = image_tensors[index_attack] + pertubation_list
+    print("Adv shape: ", adv_img_tensors.shape)
     adv_pil_images = model.decode_image_tensors(adv_img_tensors)
     output = model.inference(input_ids, adv_img_tensors, image_sizes)[0]    
     
@@ -182,6 +183,7 @@ def main(args):
         print("Ground truth answer: ", gt_answer)
 
         for index_attack in range(num_image):
+            print()
             # repair dir
             index_dir = os.path.join(sample_dir, str(index_attack))
             os.makedirs(index_dir, exist_ok=True)
