@@ -35,8 +35,9 @@ class LLava:
         )
 
         to_pil = transforms.ToPILImage()
-        pil_images = [to_pil(unnormalize(img.cpu())) for img in image_tensors]
-
+        to_pil(unnormalize(image_tensors[0].cpu()))
+        # pil_images = [to_pil(unnormalize(img.cpu())) for img in image_tensors]
+        input("Wait")
         return pil_images
     
     def repair_input(self, qs, img_files):
