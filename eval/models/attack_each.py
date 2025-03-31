@@ -112,8 +112,8 @@ def ES_1_lambda(args, benchmark, index_attack, model, lambda_,
         current_adv_files = []
         current_output = []
         for pertubations in pertubations_list:
-            fitness, adv_img_files, output = benchmark(args, image_tensors, input_ids, index_attack, image_sizes, 
-                                                            gt_answer, pertubations, model)    
+            fitness, adv_img_files, output = benchmark(args, image_tensors, index_attack, input_ids, image_sizes, 
+                                                        gt_answer, pertubations, model)    
             current_fitnesses.append(fitness)
             current_adv_files.append(adv_img_files)
             current_output.append(output)
