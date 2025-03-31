@@ -165,6 +165,7 @@ def main(args):
         qs = item['question'] 
         img_files = item['image_files'] # list of pil_image
         gt_answer = item['answer']
+        num_image = item['num_image']
         
         input_ids, image_tensors, image_sizes = model.repair_input(qs, img_files)
         
@@ -180,7 +181,7 @@ def main(args):
         print("Original output: ", original_output)
         print("Ground truth answer: ", gt_answer)
 
-        for index_attack in range(image_tensors.shape[0]):
+        for index_attack in range(num_image):
             # repair dir
             index_dir = os.path.join(sample_dir, str(index_attack))
             os.makedirs(index_dir, exist_ok=True)

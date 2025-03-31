@@ -87,7 +87,8 @@ def multi_QA_loader(image_placeholder):
                     "id": id,
                     "question": question,
                     "image_files": img_files,
-                    "answer": answer
+                    "answer": answer,
+                    "num_image": number_of_image
                 }
                 break
                 
