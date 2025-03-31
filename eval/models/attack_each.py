@@ -104,7 +104,7 @@ def ES_1_lambda(args, benchmark, index_attack, model, lambda_,
     num_evaluation = 1
     
     for i in tqdm(range(args.max_query)):
-        alpha = torch.randn(lambda_, *image_tensors.shape).to(torch.float16).cuda()
+        alpha = torch.randn(lambda_, *image_tensors[0].shape).to(torch.float16).cuda()
         pertubations_list = alpha + best_pertubations * sigma
         pertubations_list = torch.clamp(pertubations_list, -epsilon, epsilon)
         
