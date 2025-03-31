@@ -199,18 +199,13 @@ def main(args):
             
             with open(os.path.join(index_dir, "output.txt"), "w") as f:
                 f.write(f"Question: {qs}\n\n")
-                f.write("Ground truth answer: {gt_answer}\n\n")
-                f.write("Original output: {original_output}\n\n")
+                f.write(f"Ground truth answer: {gt_answer}\n\n")
+                f.write(f"Original output: {original_output}\n\n")
                 f.write(f"Attacked output: {output}\n\n")
+                f.write(f"Fitness: ", {history[-1]})
                 f.write(f"Num evaluation: {num_evaluation}\n\n")
                         
-        if success == True:
-            for j, img in enumerate(best_img_files_adv):
-                img.save(f"adv_{i}_{j}.png")
-                acc += 1
-                total_evaluation += num_evaluation
         
-    print(f"Accuracy max_query={args.max_query}:{acc/args.run} total_evaluation: {total_evaluation}")
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--pretrained", type=str, default="llava-onevision-qwen2-7b-ov")
