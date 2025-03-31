@@ -66,7 +66,6 @@ from sentence_transformers import SentenceTransformer
 import torch.nn.functional as F
 
 sim_model = SentenceTransformer('all-MiniLM-L6-v2')
-@torch.no_grad()
 def FreeText_benchmark(args, image_tensors, index_attack, input_ids, image_sizes, 
                        gt_answer, pertubation_list, model):
     
