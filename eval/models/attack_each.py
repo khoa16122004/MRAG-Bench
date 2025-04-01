@@ -88,20 +88,20 @@ def FreeText_benchmark(args, image_tensors, index_attack, input_ids, image_sizes
     s2 = 0.3 - bleu
     
     # number of words
-    num_words = len(output.split())
-    s3 = 0.1 * (10 - num_words)
+    # num_words = len(output.split())
+    # s3 = 0.1 * (10 - num_words)
     
-    # ROUGE
-    scorer = rouge_scorer.RougeScorer(['rouge1', 'rouge2', 'rougeL'], use_stemmer=True)
-    rouge_scores = scorer.score(gt_answer, output)
-    rouge1 = rouge_scores['rouge1'].fmeasure
-    rouge2 = rouge_scores['rouge2'].fmeasure
-    rougeL = rouge_scores['rougeL'].fmeasure
-    s4 = 0.3 - ((rouge1 + rouge2 + rougeL)/3)
+    # # ROUGE
+    # scorer = rouge_scorer.RougeScorer(['rouge1', 'rouge2', 'rougeL'], use_stemmer=True)
+    # rouge_scores = scorer.score(gt_answer, output)
+    # rouge1 = rouge_scores['rouge1'].fmeasure
+    # rouge2 = rouge_scores['rouge2'].fmeasure
+    # rougeL = rouge_scores['rougeL'].fmeasure
+    # s4 = 0.3 - ((rouge1 + rouge2 + rougeL)/3)
     
-    # METEOR score
-    meteor = meteor_score([gt_answer], output)
-    s5 = 0.3 - meteor
+    # # METEOR score
+    # meteor = meteor_score([gt_answer], output)
+    # s5 = 0.3 - meteor
     
     # weighted sum
     # final_score = s1 + s2 + s3 + s4 + s5
