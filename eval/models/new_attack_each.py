@@ -74,8 +74,9 @@ def FreeText_benchmark(args, image_tensors, index_attack, input_ids, image_sizes
     
     adv_img_tensors = image_tensors.detach().clone().cuda()
     adv_img_tensors[index_attack] = image_tensors[index_attack] + pertubation_list
-    adv_pil_images = model.decode_image_tensors(adv_img_tensors) # torch ten
-    output = model.inference(input_ids, adv_img_tensors, image_sizes)[0]    
+    adv_pil_images = model.decode_image_tensors(adv_img_tensors) # torch tensor
+    adv_img_tensors_real = model.repair_input(None, adv_pil_images)[1]
+    output = model.inference(input_ids, adv_img_tensors_real, image_sizes)[0]    
     
     # cosine similarity
     emb1 = sim_model.encode(output, convert_to_tensor=True)

@@ -39,14 +39,22 @@ class LLava:
         return pil_images
     
     def repair_input(self, qs, img_files):
-        conv = copy.deepcopy(conv_templates["qwen_1_5"])
-        conv.append_message(conv.roles[0], qs)
-        conv.append_message(conv.roles[1], None)
-        prompt_question = conv.get_prompt()
-        input_ids = tokenizer_image_token(prompt_question, self.tokenizer, IMAGE_TOKEN_INDEX, return_tensors="pt").unsqueeze(0).cuda()
-        image_tensors = process_images(img_files, self.image_processor, self.model.config)
-        image_tensors = torch.stack([_image.to(dtype=torch.float16, device=self.device) for _image in image_tensors])
-        image_sizes = [image.size for image in img_files]
+        # repair for question input ids
+        input_ids = None
+        if qs:
+            conv = copy.deepcopy(conv_templates["qwen_1_5"])
+            conv.append_message(conv.roles[0], qs)
+            conv.append_message(conv.roles[1], None)
+            prompt_question = conv.get_prompt()
+            input_ids = tokenizer_image_token(prompt_question, self.tokenizer, IMAGE_TOKEN_INDEX, return_tensors="pt").unsqueeze(0).cuda()
+        
+        # repair for image tensor
+        image_tensors = None
+        image_sizes = None
+        if img_files:
+            image_tensors = process_images(img_files, self.image_processor, self.model.config)
+            image_tensors = torch.stack([_image.to(dtype=torch.float16, device=self.device) for _image in image_tensors])
+            image_sizes = [image.size for image in img_files]
         return input_ids, image_tensors, image_sizes
     
     @torch.no_grad()
