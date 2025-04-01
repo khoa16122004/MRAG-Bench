@@ -165,7 +165,7 @@ def ES_1_lambda(args, benchmark, index_attack, model, lambda_,
 def main(args):
     
     # repair dir
-    experiment_dir = f"ES_lambda={args.lambda_}_epsilon={args.epsilon}_maxiter={args.max_query}_pretrained={args.pretrained}"
+    experiment_dir = f"{args.prefix_path}_ES_lambda={args.lambda_}_epsilon={args.epsilon}_maxiter={args.max_query}_pretrained={args.pretrained}"
     os.makedirs(experiment_dir, exist_ok=True)
     
     # initiallize model
@@ -176,7 +176,8 @@ def main(args):
         # repair dir
         sample_dir = os.path.join(experiment_dir, str(i))
         os.makedirs(sample_dir, exist_ok=True)
-        
+        if i != args.index_sample:
+            continue
         if i == args.run:
             break
         
@@ -228,12 +229,14 @@ def main(args):
         
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
+    parser.add_argument("--index_sampe", type=int, default=0)
     parser.add_argument("--pretrained", type=str, default="llava-onevision-qwen2-7b-ov")
     parser.add_argument("--model_name", type=str, default="llava_qwen")
     parser.add_argument("--max_query", type=int, default=1000)
     parser.add_argument("--epsilon", type=float, default=0.05)
     parser.add_argument("--run", type=int, default=10)
     parser.add_argument("--lambda_", type=int, default=50)
+    parser.add_argument("--prefix_path", type=str, default="")
     args = parser.parse_args()
 
     main(args)
