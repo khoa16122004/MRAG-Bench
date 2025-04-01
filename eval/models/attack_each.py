@@ -17,6 +17,9 @@ import math
 from torchvision import transforms
 from dataloader import multi_QA_loader
 from nltk.translate.bleu_score import sentence_bleu
+from nltk.translate.meteor_scỏe import meteor_score
+from rouge_score import rouge_scorer
+
 import warnings
 warnings.filterwarnings("ignore")
 def seed_everything(seed: int):
@@ -84,8 +87,24 @@ def FreeText_benchmark(args, image_tensors, index_attack, input_ids, image_sizes
     bleu = sentence_bleu([gt_answer.split()], output.split())
     s2 = 0.3 - bleu
     
+    # number of words
+    num_words = len(output.split())
+    s3 = 0.1 * (10 - num_words)
+    
+    # ROUGE
+    scorer = rouge_scorer.RougeScorer(['rouge1', 'rouge2', 'rougeL'], use_stemmer=True)
+    rouge_scores = scorer.score(gt_answer, output)
+    rouge1 = rouge_scores['rouge1'].fmeasure
+    rouge2 = rouge_scores['rouge2'].fmeasure
+    rougeL = rouge_scores['rougeL'].fmeasure
+    s4 = 0.3 - ((rouge1 + rouge2 + rougeL)/3)
+    
+    # METEOR score
+    meteor = meteor_score([gt_answer], output)
+    s5 = 0.3 - meteor
+    
     # weighted sum
-    final_score = s1 + s2
+    final_score = s1 + s2 + s3 + s4 + s5
     return final_score, adv_pil_images, output
         
     
@@ -105,7 +124,7 @@ def ES_1_lambda(args, benchmark, index_attack, model, lambda_,
     num_evaluation = 1
     
     for i in tqdm(range(args.max_query)):
-        alpha = torch.randn(lambda_, *image_tensors[0].shape).to(torch.float16).cuda()
+        alpha = torch.randn(lambda_, *image_tensors[index_attack].shape).to(torch.float16).cuda()
         pertubations_list = alpha + best_pertubations * sigma
         pertubations_list = torch.clamp(pertubations_list, -epsilon, epsilon)
         

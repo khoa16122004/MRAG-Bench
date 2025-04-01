@@ -95,7 +95,7 @@ def FreeText_benchmark(args, image_tensors, input_ids, image_sizes,
     bleu = sentence_bleu([gt_answer.split()], output.split())
     
     # weighted sum
-    final_score = 0.5 * s1 + 0.5 * bleu
+    final_score = s1 + bleu
     return final_score, adv_pil_images, output
     
 def save_gif(images, filename, duration=0.2):
