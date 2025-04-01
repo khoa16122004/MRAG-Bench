@@ -4,7 +4,7 @@ from PIL import Image
 import torch
 
 model = LLava("llava-onevision-qwen2-7b-ov", "llava-onevision-qwen2-7b-ov") 
-img_path_adv = "/data/elo/khoatn/MRAG-Bench/eval/models/test_stt_ES_lambda=50_epsilon=0.1_maxiter=2_pretrained=llava-onevision-qwen2-7b-ov/2/0.png"
+img_path_adv = "/data/elo/khoatn/MRAG-Bench/eval/models/test_stt_ES_lambda=50_epsilon=0.1_maxiter=2_pretrained=llava-onevision-qwen2-7b-ov/2/0/adv.png"
 clean_img_path = r"/data/elo/khoatn/MRAG-Bench/eval/models/test_stt_ES_lambda=50_epsilon=0.1_maxiter=2_pretrained=llava-onevision-qwen2-7b-ov/2/clean_img"
 img_paths = [os.path.join(clean_img_path, f"{i}.png") for i in range(4)]
 img_files_clean = [Image.open(img_path).convert("RGB") for img_path in img_paths]
