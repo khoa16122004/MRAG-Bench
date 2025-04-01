@@ -17,7 +17,7 @@ img_files_clean[0] = img_files_adv
 
 for i, img in enumerate(img_files_clean):
     img.save(f"test_{i}.png")
-question = "Which images depict activities that are typically seasonal, and what seasons are they most associated with?<image><image><image><image>"
+question = "Comparing the two scenes, which image requires more precision and skill in its creation and why?<image><image>"
 input_ids, image_tensors, image_sizes = model.repair_input(question, img_files_clean)
 print("Decoded input: ", model.inference(input_ids, image_tensors, image_sizes))
 
