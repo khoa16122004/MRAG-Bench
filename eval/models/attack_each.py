@@ -106,7 +106,7 @@ def FreeText_benchmark(args, image_tensors, index_attack, input_ids, image_sizes
     # weighted sum
     # final_score = s1 + s2 + s3 + s4 + s5
     final_score = s1 + s2
-    return final_score, adv_pil_images, output
+    return final_score, adv_pil_images, output, adv_img_tensors
         
     
 def ES_1_lambda(args, benchmark, index_attack, model, lambda_,
@@ -117,8 +117,8 @@ def ES_1_lambda(args, benchmark, index_attack, model, lambda_,
     best_pertubations = torch.randn_like(image_tensors[index_attack]).cuda()
     best_pertubations = torch.clamp(best_pertubations, -epsilon, epsilon)
 
-    best_fitness, adv_img_files, output = benchmark(args, image_tensors, index_attack, input_ids, image_sizes, 
-                                                    gt_answer, best_pertubations, model)
+    best_fitness, adv_img_files, output, best_adv_img_tensors = benchmark(args, image_tensors, index_attack, input_ids, image_sizes, 
+                                                                          gt_answer, best_pertubations, model)
     best_img_files_adv = adv_img_files
     history = [best_fitness]
     success = False
@@ -132,12 +132,14 @@ def ES_1_lambda(args, benchmark, index_attack, model, lambda_,
         current_fitnesses = []
         current_adv_files = []
         current_output = []
+        current_adv_img_tensors = []
         for pertubations in pertubations_list:
-            fitness, adv_img_files, output = benchmark(args, image_tensors, index_attack, input_ids, image_sizes, 
+            fitness, adv_img_files, output, adv_img_tensor = benchmark(args, image_tensors, index_attack, input_ids, image_sizes, 
                                                         gt_answer, pertubations, model)    
             current_fitnesses.append(fitness)
             current_adv_files.append(adv_img_files)
             current_output.append(output)
+            current_adv_img_tensors.append(adv_img_tensor)
         
         num_evaluation += lambda_
             
@@ -149,6 +151,7 @@ def ES_1_lambda(args, benchmark, index_attack, model, lambda_,
             best_pertubations = pertubations_list[best_id_current_fitness]
             best_img_files_adv = current_adv_files[best_id_current_fitness]
             output = current_output[best_id_current_fitness]
+            best_adv_img_tensors = current_adv_img_tensors[best_id_current_fitness]
             sigma *= c_increase
         else:
             sigma *= c_decrease
@@ -161,7 +164,7 @@ def ES_1_lambda(args, benchmark, index_attack, model, lambda_,
             success = True
             break
         
-    return num_evaluation, history, best_img_files_adv, success, output
+    return num_evaluation, history, best_img_files_adv, success, output, best_adv_img_tensors
 
 def main(args):
     
@@ -207,13 +210,14 @@ def main(args):
             os.makedirs(index_dir, exist_ok=True)
             
             
-            num_evaluation, history, best_img_files_adv, success, output =ES_1_lambda(args, FreeText_benchmark, index_attack, model, args.lambda_,
-                                                                                      image_tensors, image_sizes, input_ids, original_output, 
-                                                                                      epsilon=args.epsilon)
+            num_evaluation, history, best_img_files_adv, success, output, best_adv_img_tensors =ES_1_lambda(args, FreeText_benchmark, index_attack, model, args.lambda_,
+                                                                                                            image_tensors, image_sizes, input_ids, original_output, 
+                                                                                                            epsilon=args.epsilon)
             
             # log
             attacked_img_files = best_img_files_adv[index_attack]
             attacked_img_files.save(os.path.join(index_dir, "adv.png"))
+            torch.save(best_adv_img_tensors, os.path.join(index_dir, "all_adv.pt"))
             
             with open(os.path.join(index_dir, "history.txt"), "w") as f:          
                 for i, fitness in enumerate(history):

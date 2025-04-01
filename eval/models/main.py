@@ -22,8 +22,6 @@ from eval.models.dataloader import bench_data_loader
 def main(args):
     
     ans_file = open(f"ans_userag={args.use_rag}_modelname={args.model_name}_pretrained={args.pretrained}.json", "w")
-
-    
     special_token = None
     if "llava" in args.model_name:
         from llava_ import LLava
