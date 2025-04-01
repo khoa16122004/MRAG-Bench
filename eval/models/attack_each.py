@@ -17,7 +17,7 @@ import math
 from torchvision import transforms
 from dataloader import multi_QA_loader
 from nltk.translate.bleu_score import sentence_bleu
-from nltk.translate.meteor_scỏe import meteor_score
+from nltk.translate.meteor_score import meteor_score
 from rouge_score import rouge_scorer
 
 import warnings
