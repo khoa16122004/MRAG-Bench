@@ -104,7 +104,8 @@ def FreeText_benchmark(args, image_tensors, index_attack, input_ids, image_sizes
     s5 = 0.3 - meteor
     
     # weighted sum
-    final_score = s1 + s2 + s3 + s4 + s5
+    # final_score = s1 + s2 + s3 + s4 + s5
+    final_score = s1 + s2
     return final_score, adv_pil_images, output
         
     
