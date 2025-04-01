@@ -18,10 +18,11 @@ img_files_clean[0] = img_files_adv
 for i, img in enumerate(img_files_clean):
     img.save(f"test_{i}.png")
 question = "Comparing the two scenes, which image requires more precision and skill in its creation and why?<image><image>"
-input_ids, image_tensors, image_sizes = model.repair_input(question, img_files_clean)
-print("Decoded input: ", model.inference(input_ids, image_tensors, image_sizes))
+input_ids, old_image_tensors, image_sizes = model.repair_input(question, img_files_clean)
+print("Decoded input: ", model.inference(input_ids, old_image_tensors, image_sizes))
+
 
 image_tensors = torch.load("/data/elo/khoatn/MRAG-Bench/eval/models/test_stt_ES_lambda=50_epsilon=0.1_maxiter=2_pretrained=llava-onevision-qwen2-7b-ov/18/0/all_adv.pt")
 print("Directed input: ", model.inference(input_ids, image_tensors, image_sizes))
 
-
+print((image_tensors - old_image_tensors).sum())
